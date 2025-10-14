@@ -4,6 +4,15 @@ import { WEATHER_DATA } from "./data/weather.data";
 @Injectable()
 export class AppService {
   private weather = WEATHER_DATA;
+  private dynamicDelay: number | null = null;
+  // change this after the start to update delay
+  private initialDelay: number = 6000;
+
+  private getDelay() {
+    return this.dynamicDelay !== null
+      ? this.dynamicDelay
+      : this.initialDelay || parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+  }
 
   async getWeather(destination: string, date: string) {
     // Failure injection
@@ -48,13 +57,22 @@ export class AppService {
     };
   }
 
+  updateDelay(delayMs: number) {
+    this.dynamicDelay = delayMs;
+    return {
+      message: "Delay updated successfully",
+      newDelay: this.dynamicDelay,
+      unit: "milliseconds",
+    };
+  }
+
   getHealthy() {
     return {
       service: "Weather Service",
       status: "OK",
       timestamp: new Date().toISOString(),
       config: {
-        delayMs: process.env.WEATHER_DELAY_MS || "0",
+        delayMs: this.getDelay,
         failRate: process.env.WEATHER_FAIL_RATE || "0",
       },
     };

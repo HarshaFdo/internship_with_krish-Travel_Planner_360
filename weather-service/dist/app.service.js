@@ -12,6 +12,14 @@ const weather_data_1 = require("./data/weather.data");
 let AppService = class AppService {
     constructor() {
         this.weather = weather_data_1.WEATHER_DATA;
+        this.dynamicDelay = null;
+        // change this after the start to update delay
+        this.initialDelay = 6000;
+    }
+    getDelay() {
+        return this.dynamicDelay !== null
+            ? this.dynamicDelay
+            : this.initialDelay || parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
     }
     async getWeather(destination, date) {
         // Failure injection
@@ -47,13 +55,21 @@ let AppService = class AppService {
             forecast: result.forecast,
         };
     }
+    updateDelay(delayMs) {
+        this.dynamicDelay = delayMs;
+        return {
+            message: "Delay updated successfully",
+            newDelay: this.dynamicDelay,
+            unit: "milliseconds",
+        };
+    }
     getHealthy() {
         return {
             service: "Weather Service",
             status: "OK",
             timestamp: new Date().toISOString(),
             config: {
-                delayMs: process.env.WEATHER_DELAY_MS || "0",
+                delayMs: this.getDelay,
                 failRate: process.env.WEATHER_FAIL_RATE || "0",
             },
         };

@@ -6,7 +6,6 @@ import {
   Query,
 } from "@nestjs/common";
 import { AppService } from "./app.service";
-import { time } from "console";
 
 @Controller()
 export class AppController {
@@ -33,6 +32,7 @@ export class AppController {
       );
     }
   }
+
   @Get("healthy")
   getHealthy() {
     return this.appService.getHealthy();

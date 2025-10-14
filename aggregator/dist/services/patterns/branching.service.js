@@ -28,13 +28,17 @@ let BranchingService = BranchingService_1 = class BranchingService {
         try {
             // always we have to fetch flight and hotels in parallel(scatter-gather)
             this.logger.log(`[Branching] Fetching flights and hotels in parallel...`);
-            const [flightResponse, hotelResponse] = await Promise.all([
+            const [flightResponse, hotelResponse] = await Promise.allSettled([
                 this.clientsService.getFlights(from, to, date),
                 this.clientsService.getHotels(to, date),
             ]);
             const response = {
-                flights: flightResponse.flights || [],
-                hotels: hotelResponse.hotels || [],
+                flights: flightResponse.status === "fulfilled"
+                    ? flightResponse.value.flights || []
+                    : [],
+                hotels: hotelResponse.status === "fulfilled"
+                    ? hotelResponse.value.hotels || []
+                    : [],
             };
             //based on the destination(coastal/inland) we have to fetch the activities
             if (isCoastal) {
