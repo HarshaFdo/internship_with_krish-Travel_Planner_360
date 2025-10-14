@@ -1,0 +1,85 @@
+Testing WITHOUT Circuit Breaker
+Weather Service: DELAY=2000ms, FAIL_RATE=50%
+
+Request #1:
+
+Status: 200
+Time: 2.047724s
+Request #2:
+
+Status: 200
+Time: 2.035195s
+Request #3:
+
+Status: 200
+Time: 2.022462s
+Request #4:
+
+Status: 200
+Time: 2.025547s
+Request #5:
+
+Status: 200
+Time: 2.013089s
+Request #6:
+
+Status: 200
+Time: 2.010575s
+Request #7:
+
+Status: 200
+Time: 2.022981s
+Request #8:
+
+Status: 200
+Time: 2.022932s
+Request #9:
+
+Status: 200
+Time: 2.011934s
+Request #10:
+
+Status: 200
+Time: 2.039637s
+Request #11:
+
+Status: 200
+Time: 2.023920s
+Request #12:
+
+Status: 200
+Time: 2.022897s
+Request #13:
+
+Status: 200
+Time: 2.014226s
+Request #14:
+
+Status: 200
+Time: 2.011492s
+Request #15:
+
+Status: 200
+Time: 2.016404s
+Request #16:
+
+Status: 200
+Time: 2.016019s
+Request #17:
+
+Status: 200
+Time: 2.031521s
+Request #18:
+
+Status: 200
+Time: 2.026051s
+Request #19:
+
+Status: 200
+Time: 2.020711s
+Request #20:
+
+Status: 200
+Time: 2.019942s
+
+Baseline test complete - check aggregator logs

@@ -1,0 +1,70 @@
+Testing WITH Circuit Breaker
+Weather Service: DELAY=2000ms, FAIL_RATE=50%
+
+Request #1:
+  Status: 200 | Time: 2.152648s | Weather: ok
+Request #2:
+  Status: 200 | Time: 2.116337s | Weather: ok
+Request #3:
+  Status: 200 | Time: 2.021398s | Weather: ok
+Request #4:
+  Status: 200 | Time: 2.022740s | Weather: ok
+Request #5:
+  Status: 200 | Time: 2.024428s | Weather: ok
+Request #6:
+  Status: 200 | Time: 2.027009s | Weather: ok
+Request #7:
+  Status: 200 | Time: 2.022681s | Weather: ok
+Request #8:
+  Status: 200 | Time: 2.016947s | Weather: ok
+Request #9:
+  Status: 200 | Time: 2.021944s | Weather: ok
+Request #10:
+  Status: 200 | Time: 2.018343s | Weather: ok
+Request #11:
+  Status: 200 | Time: 2.025419s | Weather: ok
+Request #12:
+  Status: 200 | Time: 2.022762s | Weather: ok
+Request #13:
+  Status: 200 | Time: 2.022926s | Weather: ok
+Request #14:
+  Status: 200 | Time: 2.026114s | Weather: ok
+Request #15:
+  Status: 200 | Time: 2.025164s | Weather: ok
+Request #16:
+  Status: 200 | Time: 2.020506s | Weather: ok
+Request #17:
+  Status: 200 | Time: 2.027034s | Weather: ok
+Request #18:
+  Status: 200 | Time: 2.018975s | Weather: ok
+Request #19:
+  Status: 200 | Time: 2.011556s | Weather: ok
+Request #20:
+  Status: 200 | Time: 2.013172s | Weather: ok
+Request #21:
+  Status: 200 | Time: 2.012309s | Weather: ok
+Request #22:
+  Status: 200 | Time: 2.040053s | Weather: ok
+Request #23:
+  Status: 200 | Time: 2.019102s | Weather: ok
+Request #24:
+  Status: 200 | Time: 2.020987s | Weather: ok
+Request #25:
+  Status: 200 | Time: 2.011614s | Weather: ok
+Request #26:
+  Status: 200 | Time: 2.012516s | Weather: ok
+Request #27:
+  Status: 200 | Time: 2.025165s | Weather: ok
+Request #28:
+  Status: 200 | Time: 2.023467s | Weather: ok
+Request #29:
+  Status: 200 | Time: 2.018985s | Weather: ok
+Request #30:
+  Status: 200 | Time: 2.012084s | Weather: ok
+
+Check circuit breaker status:
+{
+  "message": "Cannot GET /metrics/circuit-breaker",
+  "error": "Not Found",
+  "statusCode": 404
+}

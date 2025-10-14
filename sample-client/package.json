@@ -1,0 +1,19 @@
+{
+  "name": "sample-client",
+  "version": "1.0.0",
+  "description": "v1 vs v2 API usage",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "test:v1": "API_VERSION=v1 node index.js",
+    "test:v2": "API_VERSION=v2 node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.12.2"
+  },
+  "devDependencies": {}
+}

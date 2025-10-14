@@ -1,0 +1,209 @@
+export const EVENTS_DATA = [
+  // MALDIVES (MLE) - Coastal events
+  {
+    id: 'EV001',
+    destination: 'MLE',
+    name: 'Maldives Beach Festival',
+    date: '2025-10-20',
+    category: 'beach',
+    description: 'Annual beach party with local music and food',
+  },
+  {
+    id: 'EV002',
+    destination: 'MLE',
+    name: 'Underwater Music Concert',
+    date: '2025-10-20',
+    category: 'music',
+    description: 'Unique underwater concert experience',
+  },
+  {
+    id: 'EV003',
+    destination: 'MLE',
+    name: 'Surfing Championship',
+    date: '2025-10-20',
+    category: 'sports',
+    description: 'International surfing competition',
+  },
+
+  // GOA - Coastal events
+  {
+    id: 'EV004',
+    destination: 'GOA',
+    name: 'Sunburn Festival',
+    date: '2025-11-15',
+    category: 'music',
+    description: "Asia's biggest electronic music festival",
+  },
+  {
+    id: 'EV005',
+    destination: 'GOA',
+    name: 'Goa Beach Carnival',
+    date: '2025-11-15',
+    category: 'beach',
+    description: 'Traditional carnival with parades and music',
+  },
+  {
+    id: 'EV006',
+    destination: 'GOA',
+    name: 'Water Sports Expo',
+    date: '2025-11-15',
+    category: 'sports',
+    description: 'Exhibition of water sports and activities',
+  },
+
+  // DUBAI (DXB) - Coastal events
+  {
+    id: 'EV007',
+    destination: 'DXB',
+    name: 'Dubai Beach Volleyball Championship',
+    date: '2025-11-20',
+    category: 'sports',
+    description: 'International beach volleyball tournament',
+  },
+  {
+    id: 'EV008',
+    destination: 'DXB',
+    name: 'Marina Food Festival',
+    date: '2025-11-20',
+    category: 'food',
+    description: 'Beachside food festival with international cuisine',
+  },
+  {
+    id: 'EV009',
+    destination: 'DXB',
+    name: 'Yacht Show',
+    date: '2025-11-20',
+    category: 'exhibition',
+    description: 'Luxury yacht exhibition at Dubai Marina',
+  },
+
+  // SINGAPORE (SIN) - Coastal events
+  {
+    id: 'EV010',
+    destination: 'SIN',
+    name: 'Sentosa Beach Party',
+    date: '2025-12-20',
+    category: 'beach',
+    description: 'Night beach party with international DJs',
+  },
+  {
+    id: 'EV011',
+    destination: 'SIN',
+    name: 'Marina Bay Light Show',
+    date: '2025-12-20',
+    category: 'exhibition',
+    description: 'Spectacular waterfront light and sound show',
+  },
+  {
+    id: 'EV012',
+    destination: 'SIN',
+    name: 'Dragon Boat Festival',
+    date: '2025-12-20',
+    category: 'sports',
+    description: 'Traditional dragon boat racing competition',
+  },
+
+  // PHUKET (HKT) - Coastal events
+  {
+    id: 'EV013',
+    destination: 'HKT',
+    name: 'Phuket Full Moon Party',
+    date: '2025-11-05',
+    category: 'beach',
+    description: 'Famous full moon beach party',
+  },
+  {
+    id: 'EV014',
+    destination: 'HKT',
+    name: 'Patong Beach Festival',
+    date: '2025-11-05',
+    category: 'beach',
+    description: 'Beach festival with live music and food stalls',
+  },
+  {
+    id: 'EV015',
+    destination: 'HKT',
+    name: 'Phuket Sailing Regatta',
+    date: '2025-11-05',
+    category: 'sports',
+    description: 'Annual sailing competition',
+  },
+
+  // BANGKOK (BKK) - Inland events
+  {
+    id: 'EV016',
+    destination: 'BKK',
+    name: 'Bangkok Street Food Festival',
+    date: '2025-12-01',
+    category: 'food',
+    description: 'Celebration of Thai street food culture',
+  },
+  {
+    id: 'EV017',
+    destination: 'BKK',
+    name: 'Grand Palace Light Show',
+    date: '2025-12-01',
+    category: 'exhibition',
+    description: 'Spectacular light show at historical landmark',
+  },
+  {
+    id: 'EV018',
+    destination: 'BKK',
+    name: 'Bangkok Jazz Festival',
+    date: '2025-12-01',
+    category: 'music',
+    description: 'International jazz music festival',
+  },
+
+  // DELHI (DEL) - Inland events
+  {
+    id: 'EV019',
+    destination: 'DEL',
+    name: 'Delhi Heritage Walk',
+    date: '2025-10-25',
+    category: 'cultural',
+    description: 'Guided walk through historical sites',
+  },
+  {
+    id: 'EV020',
+    destination: 'DEL',
+    name: 'Qutub Festival',
+    date: '2025-10-25',
+    category: 'music',
+    description: 'Classical music festival at Qutub Minar',
+  },
+  {
+    id: 'EV021',
+    destination: 'DEL',
+    name: 'Delhi Book Fair',
+    date: '2025-10-25',
+    category: 'exhibition',
+    description: 'Annual book exhibition and literary festival',
+  },
+
+  // KUALA LUMPUR (KUL) - Inland events
+  {
+    id: 'EV022',
+    destination: 'KUL',
+    name: 'Petronas Twin Towers Light Show',
+    date: '2025-12-15',
+    category: 'exhibition',
+    description: 'Nightly light and fountain show',
+  },
+  {
+    id: 'EV023',
+    destination: 'KUL',
+    name: 'Kuala Lumpur Fashion Week',
+    date: '2025-12-15',
+    category: 'fashion',
+    description: 'Southeast Asian fashion showcase',
+  },
+  {
+    id: 'EV024',
+    destination: 'KUL',
+    name: 'Malaysian Food Festival',
+    date: '2025-12-15',
+    category: 'food',
+    description: 'Celebration of Malaysian culinary diversity',
+  },
+];

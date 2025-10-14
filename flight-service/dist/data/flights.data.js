@@ -1,0 +1,126 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FLIGHTS_DATA = void 0;
+exports.FLIGHTS_DATA = [
+    {
+        id: 'FL001',
+        from: 'CMB',
+        to: 'MLE', // Maldives = COASTAL
+        airline: 'SriLankan Airlines',
+        date: '2025-10-20',
+        departTime: '08:00',
+        arriveTime: '09:30',
+        duration: '1h 30m',
+        price: 180,
+        class: 'Economy',
+    },
+    {
+        id: 'FL002',
+        from: 'CMB',
+        to: 'MLE',
+        airline: 'Maldivian',
+        date: '2025-10-25',
+        departTime: '14:00',
+        arriveTime: '15:30',
+        duration: '1h 30m',
+        price: 220,
+        class: 'Business',
+    },
+    {
+        id: 'FL003',
+        from: 'CMB',
+        to: 'GOA', // Goa = COASTAL
+        airline: 'IndiGo',
+        date: '2025-11-15',
+        departTime: '10:00',
+        arriveTime: '12:00',
+        duration: '2h',
+        price: 150,
+        class: 'Economy',
+    },
+    {
+        id: 'FL004',
+        from: 'CMB',
+        to: 'DXB', // Dubai = COASTAL (Persian Gulf)
+        date: '2025-11-20',
+        airline: 'Emirates',
+        departTime: '01:00',
+        arriveTime: '05:00',
+        duration: '4h',
+        price: 350,
+        class: 'Business',
+    },
+    {
+        id: 'FL005',
+        from: 'CMB',
+        to: 'BKK', // Bangkok = INLAND
+        airline: 'Thai Airways',
+        date: '2025-12-01',
+        departTime: '22:00',
+        arriveTime: '02:30',
+        duration: '4h 30m',
+        price: 280,
+        class: 'Economy',
+    },
+    {
+        id: 'FL006',
+        from: 'CMB',
+        to: 'BKK',
+        airline: 'SriLankan Airlines',
+        date: '2025-12-10',
+        departTime: '14:00',
+        arriveTime: '18:30',
+        duration: '4h 30m',
+        price: 250,
+        class: 'Economy',
+    },
+    {
+        id: 'FL007',
+        from: 'CMB',
+        to: 'SIN', // Singapore = COASTAL
+        airline: 'Singapore Airlines',
+        date: '2025-12-20',
+        departTime: '16:00',
+        arriveTime: '22:00',
+        duration: '6h',
+        price: 320,
+        class: 'Business',
+    },
+    {
+        id: 'FL008',
+        from: 'CMB',
+        to: 'DEL', // Delhi = INLAND
+        airline: 'Air India',
+        date: '2025-10-25',
+        departTime: '06:00',
+        arriveTime: '09:30',
+        duration: '3h 30m',
+        price: 200,
+        class: 'Economy',
+    },
+    {
+        id: 'FL009',
+        from: 'CMB',
+        to: 'HKT', // Phuket = COASTAL (beach destination)
+        airline: 'Thai Smile',
+        date: '2025-11-05',
+        departTime: '10:00',
+        arriveTime: '14:30',
+        duration: '4h 30m',
+        price: 240,
+        class: 'Economy',
+    },
+    {
+        id: 'FL010',
+        from: 'CMB',
+        to: 'KUL', // Kuala Lumpur = INLAND
+        airline: 'Malaysia Airlines',
+        date: '2025-12-15',
+        departTime: '09:00',
+        arriveTime: '15:00',
+        duration: '6h',
+        price: 270,
+        class: 'Economy',
+    },
+];
+//# sourceMappingURL=flights.data.js.map
