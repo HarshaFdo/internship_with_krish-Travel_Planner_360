@@ -220,6 +220,7 @@ It gradually shofys traffic from v1 to v2:
 
 ### Key Performance Indicators (KPIs)
 
+<<<<<<< HEAD
 **If ANY point issues occurred**
 **Immediate rollback to V1**
 - Load Balancer:
@@ -229,6 +230,15 @@ It gradually shofys traffic from v1 to v2:
 **Time to execute: < 1 minute**
 
 **Measure the adoption Rate:**
+=======
+**If ANY point issues occurred Immediate rollback to V1**
+
+- Load Balancer:
+   V2 percentage = 0%
+   V1 percentage = 100%
+
+**Time to execute: < 1 minute**
+>>>>>>> 4ff2e878 (update rollout)
 **Affected users: Those on V2 get rerouted to V1**
 ```bash
    GET /metrics
