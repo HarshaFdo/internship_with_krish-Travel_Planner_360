@@ -210,7 +210,7 @@ It gradually shofys traffic from v1 to v2:
 **Success Criteria:**
 - 100% traffic on V2
 - 0 V1 requests
-- All systems stable
+- All systems are stable
 - No rollback needed
 - Circuit breaker operating normally
 
@@ -220,9 +220,9 @@ It gradually shofys traffic from v1 to v2:
 
 ### Key Performance Indicators (KPIs)
 
-**If ANY point issues occured immediate roll back and Measure adoption Rate:**
-```bash
+**If ANY point issues occurred, immediately rollback and Measure the adoption Rate:**
 # Immediate rollback to V1
+```bash
 Load Balancer:
   V2 percentage = 0%
   V1 percentage = 100%
