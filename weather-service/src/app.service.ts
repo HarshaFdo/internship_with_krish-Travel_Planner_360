@@ -6,7 +6,11 @@ export class AppService {
   private weather = WEATHER_DATA;
   private dynamicDelay: number | null = null;
   // change this after the start to update delay
-  private initialDelay: number = 6000;
+  private initialDelay: number = 2000;
+
+  constructor() {
+    this.dynamicDelay = 5000;
+  }
 
   private getDelay() {
     return this.dynamicDelay !== null
@@ -16,7 +20,7 @@ export class AppService {
 
   async getWeather(destination: string, date: string) {
     // Failure injection
-    const delayMs = parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+    const delayMs = this.getDelay();
     const failRate = parseFloat(process.env.WEATHER_FAIL_RATE || "0");
 
     //Simulate delay
@@ -72,7 +76,7 @@ export class AppService {
       status: "OK",
       timestamp: new Date().toISOString(),
       config: {
-        delayMs: this.getDelay,
+        delayMs: this.getDelay(),
         failRate: process.env.WEATHER_FAIL_RATE || "0",
       },
     };

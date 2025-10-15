@@ -14,7 +14,7 @@ import { CircuitBreakerController } from "./controllers/circuit-breaker.controll
 @Module({
   imports: [
     HttpModule.register({
-      timeout: 5000,
+      timeout: 6000,
       maxRedirects: 5,
     }),
   ],

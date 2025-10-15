@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppService = void 0;
 const common_1 = require("@nestjs/common");
@@ -14,7 +17,8 @@ let AppService = class AppService {
         this.weather = weather_data_1.WEATHER_DATA;
         this.dynamicDelay = null;
         // change this after the start to update delay
-        this.initialDelay = 6000;
+        this.initialDelay = 2000;
+        this.dynamicDelay = 5000;
     }
     getDelay() {
         return this.dynamicDelay !== null
@@ -23,7 +27,7 @@ let AppService = class AppService {
     }
     async getWeather(destination, date) {
         // Failure injection
-        const delayMs = parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+        const delayMs = this.getDelay();
         const failRate = parseFloat(process.env.WEATHER_FAIL_RATE || "0");
         //Simulate delay
         if (delayMs > 0) {
@@ -69,7 +73,7 @@ let AppService = class AppService {
             status: "OK",
             timestamp: new Date().toISOString(),
             config: {
-                delayMs: this.getDelay,
+                delayMs: this.getDelay(),
                 failRate: process.env.WEATHER_FAIL_RATE || "0",
             },
         };
@@ -80,6 +84,7 @@ let AppService = class AppService {
 };
 exports.AppService = AppService;
 exports.AppService = AppService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [])
 ], AppService);
 //# sourceMappingURL=app.service.js.map
