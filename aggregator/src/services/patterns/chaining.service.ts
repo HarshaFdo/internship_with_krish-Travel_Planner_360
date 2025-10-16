@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ClientsService } from "../clients.service";
 
 @Injectable()
@@ -26,12 +26,12 @@ export class ChainingService {
 
       if (!flightResponse.flights) {
         this.logger.warn(`[Chaining] No flight is found`);
-        return {
-          error: "No flight is found for your specified route and date.",
+        throw new NotFoundException({
+          message: "No flight is found for your specified route and date.",
           from,
           to,
           date,
-        };
+        });
       }
 
       const flight = flightResponse.flights;
@@ -52,12 +52,12 @@ export class ChainingService {
 
       if (!hotelResponse.hotels) {
         this.logger.warn(`[Chaining] No hotel is found`);
-        return {
-          error: "No hotel is found for your specified destination.",
+         throw new NotFoundException({
+          message: "No hotel is found for your specified destination.",
           from,
           to,
           date,
-        };
+        });
       }
 
       const hotel = hotelResponse.hotels;
@@ -98,7 +98,6 @@ export class ChainingService {
       const errorStack = error instanceof Error ? error.stack : "";
 
       this.logger.error(`[Chaining] Error occurred: ${errorMessage}`);
-      this.logger.error(`[Branching] Stack: ${errorStack}`);
 
       return {
         error: errorMessage,

@@ -5,13 +5,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var AppService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppService = void 0;
 const common_1 = require("@nestjs/common");
 const hostels_data_1 = require("./data/hostels.data");
-let AppService = class AppService {
+let AppService = AppService_1 = class AppService {
     constructor() {
         this.hostels = hostels_data_1.HOTELS_DATA;
+        this.logger = new common_1.Logger(AppService_1.name);
     }
     getHotels(destination, date, lateCheckIn) {
         let results = [...this.hostels];
@@ -37,9 +39,14 @@ let AppService = class AppService {
             filtered = filtered.filter((hotel) => hotel.lateCheckIn === true);
         }
         if (filtered.length === 0) {
-            return null;
+            throw new common_1.NotFoundException({
+                message: "No hotels found for the specified criteria.",
+                destination,
+                lateCheckInOnly: lateCheckIn || false,
+            });
         }
         const cheapest = filtered.reduce((prev, current) => prev.pricePerNight < current.pricePerNight ? prev : current);
+        this.logger.log(`Cheapest hotel found: ${cheapest.name} at $${cheapest.pricePerNight}/night`);
         return cheapest;
     }
     getHeathy() {
@@ -52,7 +59,7 @@ let AppService = class AppService {
     }
 };
 exports.AppService = AppService;
-exports.AppService = AppService = __decorate([
+exports.AppService = AppService = AppService_1 = __decorate([
     (0, common_1.Injectable)()
 ], AppService);
 //# sourceMappingURL=app.service.js.map

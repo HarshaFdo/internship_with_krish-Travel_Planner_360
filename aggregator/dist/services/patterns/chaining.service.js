@@ -28,12 +28,12 @@ let ChainingService = ChainingService_1 = class ChainingService {
             const flightResponse = await this.clientsService.getCheapestFlight(from, to, date);
             if (!flightResponse.flights) {
                 this.logger.warn(`[Chaining] No flight is found`);
-                return {
-                    error: "No flight is found for your specified route and date.",
+                throw new common_1.NotFoundException({
+                    message: "No flight is found for your specified route and date.",
                     from,
                     to,
                     date,
-                };
+                });
             }
             const flight = flightResponse.flights;
             const isLateArrival = flightResponse.lateArrival || false;
@@ -43,12 +43,12 @@ let ChainingService = ChainingService_1 = class ChainingService {
             const hotelResponse = await this.clientsService.getCheapestHotel(to, isLateArrival);
             if (!hotelResponse.hotels) {
                 this.logger.warn(`[Chaining] No hotel is found`);
-                return {
-                    error: "No hotel is found for your specified destination.",
+                throw new common_1.NotFoundException({
+                    message: "No hotel is found for your specified destination.",
                     from,
                     to,
                     date,
-                };
+                });
             }
             const hotel = hotelResponse.hotels;
             this.logger.log(`[Chaining] 2- complete. Fetched the cheapest hotel: ${hotel.id} - Late check-in: ${hotel.lateCheckIn}`);
@@ -84,7 +84,6 @@ let ChainingService = ChainingService_1 = class ChainingService {
             const errorMessage = error instanceof Error ? error.message : "An unknown error";
             const errorStack = error instanceof Error ? error.stack : "";
             this.logger.error(`[Chaining] Error occurred: ${errorMessage}`);
-            this.logger.error(`[Branching] Stack: ${errorStack}`);
             return {
                 error: errorMessage,
                 stack: errorStack,

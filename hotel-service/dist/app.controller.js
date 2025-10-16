@@ -26,11 +26,11 @@ let AppController = class AppController {
         const isLateCheckIn = lateCheckIn === "true";
         const cheapest = this.appService.getCheapestHotel(destination, isLateCheckIn);
         if (!cheapest) {
-            return {
-                error: "No hotel is found for your specified destination.",
+            throw new common_1.NotFoundException({
+                message: "No hotel is found for your specified destination.",
                 destination,
                 lateCheckInOnly: isLateCheckIn,
-            };
+            });
         }
         return { hotels: cheapest };
     }
