@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
 import { AppService } from "./app.service";
 
 @Controller()
@@ -26,11 +26,11 @@ export class AppController {
     );
 
     if (!cheapest) {
-      return {
-        error: "No hotel is found for your specified destination.",
+      throw new NotFoundException({
+        message: "No hotel is found for your specified destination.",
         destination,
         lateCheckInOnly: isLateCheckIn,
-      };
+      });
     }
 
     return { hotels: cheapest };

@@ -1,71 +1,104 @@
-import { Injectable } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+  ServiceUnavailableException,
+} from "@nestjs/common";
 import { WEATHER_DATA } from "./data/weather.data";
 
 @Injectable()
 export class AppService {
+  private readonly logger = new Logger(AppService.name);
   private weather = WEATHER_DATA;
-  private dynamicDelay: number | null = null;
-  // change this after the start to update delay
-  private initialDelay: number = 2000;
+  private serviceDelayDuration: number;
 
   constructor() {
-    this.dynamicDelay = 5000;
+    this.serviceDelayDuration = parseInt(
+      process.env.WEATHER_DELAY_MS || "0",
+      10
+    );
+    this.logger.log(
+      `Weather service initialized with delay=${this.serviceDelayDuration}ms`
+    );
   }
 
-  private getDelay() {
-    return this.dynamicDelay !== null
-      ? this.dynamicDelay
-      : this.initialDelay || parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+  getDelay(): number {
+    return this.serviceDelayDuration;
   }
 
   async getWeather(destination: string, date: string) {
-    // Failure injection
+    try {
+      await this.simulateFailureInjection();
+
+      let result = this.weather.find(
+        (w) => w.destination.toLowerCase() === destination.toLowerCase()
+      );
+
+      if (!result) {
+        throw new NotFoundException({
+          message:
+            "Weather data is not availabe for your specified destination.",
+          destination,
+        });
+      }
+
+      if (date) {
+        const dayForecast = result.forecast.find((f) => f.date === date);
+        if (dayForecast) {
+          return {
+            destination: result.destination,
+            forecast: [dayForecast],
+          };
+        }
+      }
+
+      // Return 7-day forecast
+      return {
+        destination: result.destination,
+        forecast: result.forecast,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      } else {
+        throw new ServiceUnavailableException({
+          message:
+            error instanceof Error ? error.message : "Weather service error",
+        });
+      }
+    }
+  }
+
+  private async simulateFailureInjection(): Promise<void> {
     const delayMs = this.getDelay();
     const failRate = parseFloat(process.env.WEATHER_FAIL_RATE || "0");
 
-    //Simulate delay
+    // Simulate delay
     if (delayMs > 0) {
-      await this.delay(delayMs);
-    }
+      this.logger.debug(`Simulating service delay of ${delayMs}ms`);
+      try {
+        await this.delay(delayMs);
+      } catch (error) {
+        throw new InternalServerErrorException(
+          "Failed during delay simulation"
+        );
+      }
 
-    // Simulate random failure
-    if (failRate > 0 && Math.random() < failRate) {
-      throw new Error("Weather service temporily unavailable.");
-    }
-
-    let result = this.weather.find(
-      (w) => w.destination.toLowerCase() === destination.toLowerCase()
-    );
-
-    if (!result) {
-      return {
-        error: "Weather data is not availabe for your specified destination.",
-        destination,
-      };
-    }
-
-    if (date) {
-      const dayForecast = result.forecast.find((f) => f.date === date);
-      if (dayForecast) {
-        return {
-          destination: result.destination,
-          forecast: [dayForecast],
-        };
+      // Simulate random failure
+      if (failRate > 0 && Math.random() < failRate) {
+        throw new ServiceUnavailableException(
+          "Weather service temporarily unavailable."
+        );
       }
     }
-
-    // Return 7-day forecast
-    return {
-      destination: result.destination,
-      forecast: result.forecast,
-    };
   }
 
   updateDelay(delayMs: number) {
-    this.dynamicDelay = delayMs;
+    this.serviceDelayDuration = delayMs;
     return {
       message: "Delay updated successfully",
-      newDelay: this.dynamicDelay,
+      newDelay: this.serviceDelayDuration,
       unit: "milliseconds",
     };
   }

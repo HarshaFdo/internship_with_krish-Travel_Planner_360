@@ -1,6 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ClientsService } from "../clients.service";
-import { error } from "console";
 
 @Injectable()
 export class ChainingService {

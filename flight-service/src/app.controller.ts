@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
 import { AppService } from "./app.service";
 
 @Controller()
@@ -23,19 +23,19 @@ export class AppController {
     const cheapest = this.appService.getCheapestFlight(from, to);
 
     if (!cheapest) {
-      return {
-        error: "No flight is found for your specified route.",
+      throw new NotFoundException({
+        message: "No flight is found for your specified route.",
         from,
         to,
         date: date || "any",
-      };
+      });
     }
 
     const isLateArrival = this.appService.isLateArrival(cheapest.arriveTime);
 
-    return { 
-      flights: cheapest, 
-      lateArrival: isLateArrival 
+    return {
+      flights: cheapest,
+      lateArrival: isLateArrival,
     };
   }
 

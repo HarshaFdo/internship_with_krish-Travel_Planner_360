@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { FLIGHTS_DATA } from "./data/flights.data";
 
 @Injectable()
 export class AppService {
   private flights = FLIGHTS_DATA;
+  private readonly logger = new Logger(AppService.name);
 
   getFlights(from?: string, to?: string, date?: string) {
     let results = [...this.flights];
@@ -24,6 +25,7 @@ export class AppService {
       results = results.filter((flight) => flight.date === date);
     }
 
+    this.logger.log(`Returning ${results.length} flights`);
     return {
       flights: results,
       metadata: {
@@ -47,13 +49,19 @@ export class AppService {
     }
 
     if (filtered.length === 0) {
-      return null;
+      throw new NotFoundException({
+        message: "No flights found for the specified route.",
+        from,
+        to,
+        date: date || "any",
+      });
     }
 
     const cheapest = filtered.reduce((prev, current) =>
       prev.price < current.price ? prev : current
     );
 
+    this.logger.log(`Cheapest flight found: ${cheapest.from} at $${cheapest.price}`);
     return cheapest;
   }
 

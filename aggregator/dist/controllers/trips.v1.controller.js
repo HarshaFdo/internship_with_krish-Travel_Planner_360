@@ -27,7 +27,7 @@ let TripsV1Controller = class TripsV1Controller {
     }
     // for scatter-gather pattern
     async search(from, to, date) {
-        this.metricsService.trackV1Request("/v1/trips/search");
+        this.metricsService.trackRequest("v1", "/v1/trips/search");
         if (!from || !to || !date) {
             throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
         }
@@ -35,7 +35,7 @@ let TripsV1Controller = class TripsV1Controller {
     }
     // for chaining pattern
     async cheapestRoute(from, to, date) {
-        this.metricsService.trackV1Request("/v1/trips/cheapest-route");
+        this.metricsService.trackRequest("v1", "/v1/trips/cheapest-route");
         if (!from || !to || !date) {
             throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
         }
@@ -43,7 +43,7 @@ let TripsV1Controller = class TripsV1Controller {
     }
     // for branching pattern
     async contextual(from, to, date) {
-        this.metricsService.trackV1Request("/v1/trips/contextual");
+        this.metricsService.trackRequest("v1", "/v1/trips/contextual");
         if (!from || !to || !date) {
             throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
         }

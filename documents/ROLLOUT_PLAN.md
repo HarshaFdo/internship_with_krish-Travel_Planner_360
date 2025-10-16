@@ -9,7 +9,7 @@ Gradually migrate clients from V1 to V2 API using CANARY pattern. The plan prior
 
 ### What Canary Deployemet Does?
 
-It gradually shofys traffic from v1 to v2:
+It gradually shifts traffic from v1 to v2:
 - Start with a small percentage of users (5%)
 - Monitor for errors and performance
 - Gradually increase percentage

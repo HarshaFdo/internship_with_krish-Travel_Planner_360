@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo "Testing WITH Circuit Breaker"
-echo "Weather Service: DELAY=10000ms, FAIL_RATE=50%"
+echo "Weather Service: DELAY=5000ms, FAIL_RATE=50%"
 echo ""
 
-for i in {1..10}; do
+for i in {1..5}; do
   echo "Request #$i:"
   START=$(date +%s%3N)
   

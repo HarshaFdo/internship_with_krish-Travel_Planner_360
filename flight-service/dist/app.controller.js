@@ -25,17 +25,17 @@ let AppController = class AppController {
     getCheapestFlight(from, to, date) {
         const cheapest = this.appService.getCheapestFlight(from, to);
         if (!cheapest) {
-            return {
-                error: "No flight is found for your specified route.",
+            throw new common_1.NotFoundException({
+                message: "No flight is found for your specified route.",
                 from,
                 to,
                 date: date || "any",
-            };
+            });
         }
         const isLateArrival = this.appService.isLateArrival(cheapest.arriveTime);
         return {
             flights: cheapest,
-            lateArrival: isLateArrival
+            lateArrival: isLateArrival,
         };
     }
     getHealthy() {

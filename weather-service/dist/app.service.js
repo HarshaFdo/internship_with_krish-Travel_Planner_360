@@ -8,62 +8,80 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var AppService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppService = void 0;
 const common_1 = require("@nestjs/common");
 const weather_data_1 = require("./data/weather.data");
-let AppService = class AppService {
+let AppService = AppService_1 = class AppService {
     constructor() {
+        this.logger = new common_1.Logger(AppService_1.name);
         this.weather = weather_data_1.WEATHER_DATA;
-        this.dynamicDelay = null;
-        // change this after the start to update delay
-        this.initialDelay = 2000;
-        this.dynamicDelay = 5000;
+        this.serviceDelayDuration = parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+        this.logger.log(`Weather service initialized with delay=${this.serviceDelayDuration}ms`);
     }
     getDelay() {
-        return this.dynamicDelay !== null
-            ? this.dynamicDelay
-            : this.initialDelay || parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+        return this.serviceDelayDuration;
     }
     async getWeather(destination, date) {
-        // Failure injection
-        const delayMs = this.getDelay();
-        const failRate = parseFloat(process.env.WEATHER_FAIL_RATE || "0");
-        //Simulate delay
-        if (delayMs > 0) {
-            await this.delay(delayMs);
-        }
-        // Simulate random failure
-        if (failRate > 0 && Math.random() < failRate) {
-            throw new Error("Weather service temporily unavailable.");
-        }
-        let result = this.weather.find((w) => w.destination.toLowerCase() === destination.toLowerCase());
-        if (!result) {
+        try {
+            await this.simulateFailureInjection();
+            let result = this.weather.find((w) => w.destination.toLowerCase() === destination.toLowerCase());
+            if (!result) {
+                throw new common_1.NotFoundException({
+                    message: "Weather data is not availabe for your specified destination.",
+                    destination,
+                });
+            }
+            if (date) {
+                const dayForecast = result.forecast.find((f) => f.date === date);
+                if (dayForecast) {
+                    return {
+                        destination: result.destination,
+                        forecast: [dayForecast],
+                    };
+                }
+            }
+            // Return 7-day forecast
             return {
-                error: "Weather data is not availabe for your specified destination.",
-                destination,
+                destination: result.destination,
+                forecast: result.forecast,
             };
         }
-        if (date) {
-            const dayForecast = result.forecast.find((f) => f.date === date);
-            if (dayForecast) {
-                return {
-                    destination: result.destination,
-                    forecast: [dayForecast],
-                };
+        catch (error) {
+            if (error instanceof common_1.NotFoundException) {
+                throw error;
+            }
+            else {
+                throw new common_1.ServiceUnavailableException({
+                    message: error instanceof Error ? error.message : "Weather service error",
+                });
             }
         }
-        // Return 7-day forecast
-        return {
-            destination: result.destination,
-            forecast: result.forecast,
-        };
+    }
+    async simulateFailureInjection() {
+        const delayMs = this.getDelay();
+        const failRate = parseFloat(process.env.WEATHER_FAIL_RATE || "0");
+        // Simulate delay
+        if (delayMs > 0) {
+            this.logger.debug(`Simulating service delay of ${delayMs}ms`);
+            try {
+                await this.delay(delayMs);
+            }
+            catch (error) {
+                throw new common_1.InternalServerErrorException("Failed during delay simulation");
+            }
+            // Simulate random failure
+            if (failRate > 0 && Math.random() < failRate) {
+                throw new common_1.ServiceUnavailableException("Weather service temporarily unavailable.");
+            }
+        }
     }
     updateDelay(delayMs) {
-        this.dynamicDelay = delayMs;
+        this.serviceDelayDuration = delayMs;
         return {
             message: "Delay updated successfully",
-            newDelay: this.dynamicDelay,
+            newDelay: this.serviceDelayDuration,
             unit: "milliseconds",
         };
     }
@@ -83,7 +101,7 @@ let AppService = class AppService {
     }
 };
 exports.AppService = AppService;
-exports.AppService = AppService = __decorate([
+exports.AppService = AppService = AppService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], AppService);

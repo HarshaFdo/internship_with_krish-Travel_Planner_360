@@ -20,7 +20,7 @@ export class TripsV1Controller {
     @Query("to") to: string,
     @Query("date") date: string
   ) {
-    this.metricsService.trackV1Request("/v1/trips/search");
+    this.metricsService.trackRequest("v1", "/v1/trips/search");
 
     if (!from || !to || !date) {
       throw new BadRequestException(
@@ -38,7 +38,7 @@ export class TripsV1Controller {
     @Query("to") to: string,
     @Query("date") date: string
   ) {
-    this.metricsService.trackV1Request("/v1/trips/cheapest-route");
+    this.metricsService.trackRequest("v1", "/v1/trips/cheapest-route");
 
     if (!from || !to || !date) {
       throw new BadRequestException(
@@ -56,7 +56,7 @@ export class TripsV1Controller {
     @Query("to") to: string,
     @Query("date") date: string
   ) {
-    this.metricsService.trackV1Request("/v1/trips/contextual");
+    this.metricsService.trackRequest("v1", "/v1/trips/contextual");
 
     if (!from || !to || !date) {
       throw new BadRequestException(
@@ -67,5 +67,3 @@ export class TripsV1Controller {
     return this.branchingService.execute(from, to, date);
   }
 }
-
-

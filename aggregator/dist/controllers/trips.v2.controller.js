@@ -32,7 +32,7 @@ let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
         if (!from || !to || !date) {
             throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
         }
-        this.metricsService.trackV2Request("/v2/trips/search");
+        this.metricsService.trackRequest("v2", "/v2/trips/search");
         const v1Response = await this.scatterGatherService.execute(from, to, date);
         this.logger.log(`[V2] /search called with from=${from}, to=${to}, date=${date}`);
         //  circuit breaker for weather service

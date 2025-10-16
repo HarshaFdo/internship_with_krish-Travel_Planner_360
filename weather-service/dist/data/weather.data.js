@@ -17,9 +17,9 @@ exports.WEATHER_DATA = [
     },
     // GOA - Coastal
     {
-        destination: 'GOA',
+        destination: 'MLE',
         forecast: [
-            { date: '2025-12-10', tempMin: 22, tempMax: 30, condition: 'Sunny' },
+            { date: '2025-10-20', tempMin: 22, tempMax: 30, condition: 'Sunny' },
             { date: '2025-12-11', tempMin: 23, tempMax: 31, condition: 'Sunny' },
             { date: '2025-12-12', tempMin: 22, tempMax: 29, condition: 'Partly Cloudy' },
             { date: '2025-12-13', tempMin: 21, tempMax: 28, condition: 'Cloudy' },

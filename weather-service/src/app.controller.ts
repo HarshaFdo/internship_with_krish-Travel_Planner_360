@@ -33,6 +33,12 @@ export class AppController {
     }
   }
 
+  @Get("set-delay")
+  changeDelay() {
+    this.appService.updateDelay(5000);
+    return;
+  }
+
   @Get("healthy")
   getHealthy() {
     return this.appService.getHealthy();

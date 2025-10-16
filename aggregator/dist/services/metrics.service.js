@@ -18,24 +18,21 @@ let MetricsService = MetricsService_1 = class MetricsService {
             startTime: new Date(),
         };
     }
-    trackV1Request(endpoint) {
-        this.metrics.v1Requests++;
-        this.logger.log(`[Metrics] V1 request to ${endpoint} | Total V1 requests: ${this.metrics.v1Requests}`);
-    }
-    trackV2Request(endpoint) {
-        this.metrics.v2Requests++;
-        this.logger.log(`[Metrics] V2 request to ${endpoint} | Total V2 requests: ${this.metrics.v2Requests}`);
+    trackRequest(version, endpoint) {
+        const key = version === "v1" ? "v1Requests" : "v2Requests";
+        this.metrics[key]++;
+        this.logger.log(`[Metrics] ${version.toUpperCase()} request to ${endpoint} | Total ${version.toUpperCase()} requests: ${this.metrics[key]}`);
     }
     getMetrics() {
-        const total = this.metrics.v1Requests + this.metrics.v2Requests;
-        const v1Percentage = total ? (this.metrics.v1Requests / total) * 100 : 0;
-        const v2Percentage = total ? (this.metrics.v2Requests / total) * 100 : 0;
+        const { v1Requests, v2Requests } = this.metrics;
+        const total = v1Requests + v2Requests;
+        const calcPercentage = (count) => total ? ((count / total) * 100).toFixed(2) + "%" : "0.00%";
         return {
-            v1Requests: this.metrics.v1Requests,
-            v2Requests: this.metrics.v2Requests,
+            v1Requests,
+            v2Requests,
             totalRequests: total,
-            v1Percentage: v1Percentage.toFixed(2) + "%",
-            v2Percentage: v2Percentage.toFixed(2) + "%",
+            v1Percentage: calcPercentage(v1Requests),
+            v2Percentage: calcPercentage(v2Requests),
             uptime: this.getUptime(),
         };
     }

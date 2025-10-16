@@ -5,13 +5,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var AppService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppService = void 0;
 const common_1 = require("@nestjs/common");
 const flights_data_1 = require("./data/flights.data");
-let AppService = class AppService {
+let AppService = AppService_1 = class AppService {
     constructor() {
         this.flights = flights_data_1.FLIGHTS_DATA;
+        this.logger = new common_1.Logger(AppService_1.name);
     }
     getFlights(from, to, date) {
         let results = [...this.flights];
@@ -24,6 +26,7 @@ let AppService = class AppService {
         if (date) {
             results = results.filter((flight) => flight.date === date);
         }
+        this.logger.log(`Returning ${results.length} flights`);
         return {
             flights: results,
             metadata: {
@@ -41,9 +44,15 @@ let AppService = class AppService {
             filtered = filtered.filter((flight) => flight.date === date);
         }
         if (filtered.length === 0) {
-            return null;
+            throw new common_1.NotFoundException({
+                message: "No flights found for the specified route.",
+                from,
+                to,
+                date: date || "any",
+            });
         }
         const cheapest = filtered.reduce((prev, current) => prev.price < current.price ? prev : current);
+        this.logger.log(`Cheapest flight found: ${cheapest.from} at $${cheapest.price}`);
         return cheapest;
     }
     isLateArrival(arriveTime) {
@@ -60,7 +69,7 @@ let AppService = class AppService {
     }
 };
 exports.AppService = AppService;
-exports.AppService = AppService = __decorate([
+exports.AppService = AppService = AppService_1 = __decorate([
     (0, common_1.Injectable)()
 ], AppService);
 //# sourceMappingURL=app.service.js.map

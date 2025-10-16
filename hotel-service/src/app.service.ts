@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { HOTELS_DATA } from "./data/hostels.data";
 
 @Injectable()
 export class AppService {
   private hostels = HOTELS_DATA;
+  private readonly logger = new Logger(AppService.name);
 
   getHotels(destination?: string, date?: string, lateCheckIn?: string) {
     let results = [...this.hostels];
@@ -39,13 +40,18 @@ export class AppService {
     }
 
     if (filtered.length === 0) {
-      return null;
+      throw new NotFoundException({
+        message: "No hotels found for the specified criteria.",
+        destination,
+        lateCheckInOnly: lateCheckIn || false,
+      });
     }
 
     const cheapest = filtered.reduce((prev, current) =>
       prev.pricePerNight < current.pricePerNight ? prev : current
     );
 
+    this.logger.log(`Cheapest hotel found: ${cheapest.name} at $${cheapest.pricePerNight}/night`);
     return cheapest;
   }
 

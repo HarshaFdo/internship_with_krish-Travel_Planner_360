@@ -34,7 +34,7 @@ export class TripsV2Controller {
       );
     }
 
-    this.metricsService.trackV2Request("/v2/trips/search");
+    this.metricsService.trackRequest("v2","/v2/trips/search");
 
     const v1Response = await this.scatterGatherService.execute(from, to, date);
 

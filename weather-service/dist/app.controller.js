@@ -32,6 +32,10 @@ let AppController = class AppController {
             }, common_1.HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
+    changeDelay() {
+        this.appService.updateDelay(5000);
+        return;
+    }
     getHealthy() {
         return this.appService.getHealthy();
     }
@@ -45,6 +49,12 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getWeather", null);
+__decorate([
+    (0, common_1.Get)("set-delay"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "changeDelay", null);
 __decorate([
     (0, common_1.Get)("healthy"),
     __metadata("design:type", Function),
