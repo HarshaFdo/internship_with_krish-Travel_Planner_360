@@ -18,6 +18,7 @@ let AppService = AppService_1 = class AppService {
         this.logger = new common_1.Logger(AppService_1.name);
         this.weather = weather_data_1.WEATHER_DATA;
         this.serviceDelayDuration = parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
+        this.originalDelay = this.serviceDelayDuration;
         this.logger.log(`Weather service initialized with delay=${this.serviceDelayDuration}ms`);
     }
     async getWeather(destination, date) {
@@ -86,6 +87,16 @@ let AppService = AppService_1 = class AppService {
         return {
             message: "Delay updated successfully",
             newDelay: this.serviceDelayDuration,
+            unit: "milliseconds",
+        };
+    }
+    // Reset the delay to orginal one
+    resetDelay() {
+        this.serviceDelayDuration = this.originalDelay;
+        this.logger.log(`Delay reset to original value: ${this.originalDelay}ms`);
+        return {
+            message: "Delay reset to original value",
+            delay: this.serviceDelayDuration,
             unit: "milliseconds",
         };
     }

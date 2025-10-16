@@ -12,12 +12,14 @@ export class AppService {
   private readonly logger = new Logger(AppService.name);
   private weather = WEATHER_DATA;
   private serviceDelayDuration: number;
+  private originalDelay: number;
 
   constructor() {
     this.serviceDelayDuration = parseInt(
       process.env.WEATHER_DELAY_MS || "0",
       10
     );
+    this.originalDelay = this.serviceDelayDuration;
 
     this.logger.log(
       `Weather service initialized with delay=${this.serviceDelayDuration}ms`
@@ -104,6 +106,17 @@ export class AppService {
     return {
       message: "Delay updated successfully",
       newDelay: this.serviceDelayDuration,
+      unit: "milliseconds",
+    };
+  }
+
+  // Reset the delay to orginal one
+  resetDelay() {
+    this.serviceDelayDuration = this.originalDelay;
+    this.logger.log(`Delay reset to original value: ${this.originalDelay}ms`);
+    return {
+      message: "Delay reset to original value",
+      delay: this.serviceDelayDuration,
       unit: "milliseconds",
     };
   }

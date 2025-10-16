@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Post,
   Put,
   Query,
 } from "@nestjs/common";
@@ -41,9 +42,14 @@ export class AppController {
   }
 
   // Endpoint to update delay
-  @Put('config/delay')
-  updateDelay(
-    @Body('delayMs') delayMs: number) {
+  @Put("config/delay")
+  updateDelay(@Body("delayMs") delayMs: number) {
     return this.appService.updateDelay(delayMs);
+  }
+
+  // Endpoint to reset the delay to orginal
+  @Post("config/delay/reset")
+  resetDelay() {
+    return this.appService.resetDelay();
   }
 }
