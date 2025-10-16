@@ -32,12 +32,12 @@ let AppController = class AppController {
             }, common_1.HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
-    changeDelay() {
-        this.appService.updateDelay(5000);
-        return;
-    }
     getHealthy() {
         return this.appService.getHealthy();
+    }
+    // Endpoint to update delay
+    updateDelay(delayMs) {
+        return this.appService.updateDelay(delayMs);
     }
 };
 exports.AppController = AppController;
@@ -50,17 +50,18 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getWeather", null);
 __decorate([
-    (0, common_1.Get)("set-delay"),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "changeDelay", null);
-__decorate([
     (0, common_1.Get)("healthy"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getHealthy", null);
+__decorate([
+    (0, common_1.Put)('config/delay'),
+    __param(0, (0, common_1.Body)('delayMs')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "updateDelay", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])

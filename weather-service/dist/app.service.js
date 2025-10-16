@@ -20,12 +20,11 @@ let AppService = AppService_1 = class AppService {
         this.serviceDelayDuration = parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
         this.logger.log(`Weather service initialized with delay=${this.serviceDelayDuration}ms`);
     }
-    getDelay() {
-        return this.serviceDelayDuration;
-    }
     async getWeather(destination, date) {
         try {
+            // Check for failures
             await this.simulateFailureInjection();
+            // Search for destination
             let result = this.weather.find((w) => w.destination.toLowerCase() === destination.toLowerCase());
             if (!result) {
                 throw new common_1.NotFoundException({
@@ -33,6 +32,7 @@ let AppService = AppService_1 = class AppService {
                     destination,
                 });
             }
+            // If date specified then find specific day forecast
             if (date) {
                 const dayForecast = result.forecast.find((f) => f.date === date);
                 if (dayForecast) {
@@ -42,7 +42,7 @@ let AppService = AppService_1 = class AppService {
                     };
                 }
             }
-            // Return 7-day forecast
+            // Return 7-day forecast if no date or date not found
             return {
                 destination: result.destination,
                 forecast: result.forecast,
@@ -77,6 +77,10 @@ let AppService = AppService_1 = class AppService {
             }
         }
     }
+    getDelay() {
+        return this.serviceDelayDuration;
+    }
+    // Update delay dynamically
     updateDelay(delayMs) {
         this.serviceDelayDuration = delayMs;
         return {

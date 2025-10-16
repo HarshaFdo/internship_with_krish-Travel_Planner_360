@@ -18,19 +18,18 @@ export class AppService {
       process.env.WEATHER_DELAY_MS || "0",
       10
     );
+
     this.logger.log(
       `Weather service initialized with delay=${this.serviceDelayDuration}ms`
     );
   }
 
-  getDelay(): number {
-    return this.serviceDelayDuration;
-  }
-
   async getWeather(destination: string, date: string) {
     try {
+      // Check for failures
       await this.simulateFailureInjection();
 
+      // Search for destination
       let result = this.weather.find(
         (w) => w.destination.toLowerCase() === destination.toLowerCase()
       );
@@ -43,6 +42,7 @@ export class AppService {
         });
       }
 
+      // If date specified then find specific day forecast
       if (date) {
         const dayForecast = result.forecast.find((f) => f.date === date);
         if (dayForecast) {
@@ -53,7 +53,7 @@ export class AppService {
         }
       }
 
-      // Return 7-day forecast
+      // Return 7-day forecast if no date or date not found
       return {
         destination: result.destination,
         forecast: result.forecast,
@@ -94,6 +94,11 @@ export class AppService {
     }
   }
 
+  getDelay(): number {
+    return this.serviceDelayDuration;
+  }
+
+  // Update delay dynamically
   updateDelay(delayMs: number) {
     this.serviceDelayDuration = delayMs;
     return {

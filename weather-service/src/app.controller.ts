@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
+  Put,
   Query,
 } from "@nestjs/common";
 import { AppService } from "./app.service";
@@ -33,14 +35,15 @@ export class AppController {
     }
   }
 
-  @Get("set-delay")
-  changeDelay() {
-    this.appService.updateDelay(5000);
-    return;
-  }
-
   @Get("healthy")
   getHealthy() {
     return this.appService.getHealthy();
+  }
+
+  // Endpoint to update delay
+  @Put('config/delay')
+  updateDelay(
+    @Body('delayMs') delayMs: number) {
+    return this.appService.updateDelay(delayMs);
   }
 }
