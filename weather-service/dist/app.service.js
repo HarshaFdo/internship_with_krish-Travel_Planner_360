@@ -50,12 +50,15 @@ let AppService = AppService_1 = class AppService {
             };
         }
         catch (error) {
-            if (error instanceof common_1.NotFoundException) {
+            if (error instanceof common_1.NotFoundException ||
+                error instanceof common_1.BadRequestException) {
                 throw error;
             }
             else {
                 throw new common_1.ServiceUnavailableException({
-                    message: error instanceof Error ? error.message : "Weather service error",
+                    message: error instanceof Error
+                        ? error.message
+                        : "Weather service temporily unavailable",
                 });
             }
         }

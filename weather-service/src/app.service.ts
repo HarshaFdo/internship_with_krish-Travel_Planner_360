@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -61,12 +62,17 @@ export class AppService {
         forecast: result.forecast,
       };
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
         throw error;
       } else {
         throw new ServiceUnavailableException({
           message:
-            error instanceof Error ? error.message : "Weather service error",
+            error instanceof Error
+              ? error.message
+              : "Weather service temporily unavailable",
         });
       }
     }

@@ -1,28 +1,30 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { FLIGHTS_DATA } from "./data/flights.data";
+import { SearchFlightDto } from "./dto/search-flights.dto";
+import { GetCheapestFlightDto } from "./dto/get-cheapest-flight.dto";
 
 @Injectable()
 export class AppService {
   private flights = FLIGHTS_DATA;
   private readonly logger = new Logger(AppService.name);
 
-  getFlights(from?: string, to?: string, date?: string) {
+  getFlights(query: SearchFlightDto) {
     let results = [...this.flights];
 
-    if (from) {
+    if (query.from) {
       results = results.filter(
-        (flight) => flight.from.toLocaleLowerCase() === from.toLocaleLowerCase()
+        (flight) => flight.from.toLocaleLowerCase() === query.from!.toLocaleLowerCase()
       );
     }
 
-    if (to) {
+    if (query.to) {
       results = results.filter(
-        (flight) => flight.to.toLocaleLowerCase() === to.toLocaleLowerCase()
+        (flight) => flight.to.toLocaleLowerCase() === query.to!.toLocaleLowerCase()
       );
     }
 
-    if (date) {
-      results = results.filter((flight) => flight.date === date);
+    if (query.date) {
+      results = results.filter((flight) => flight.date === query.date);
     }
 
     this.logger.log(`Returning ${results.length} flights`);
@@ -30,30 +32,30 @@ export class AppService {
       flights: results,
       metadata: {
         total: results.length,
-        from: from || "any",
-        to: to || "any",
-        date: date || "any",
+        from: query.from || "any",
+        to: query.to || "any",
+        date: query.date || "any",
       },
     };
   }
 
-  getCheapestFlight(from: string, to: string, date?: string) {
+  getCheapestFlight(query: GetCheapestFlightDto) {
     let filtered = this.flights.filter(
       (flight) =>
-        flight.from.toLocaleLowerCase() === from.toLocaleLowerCase() &&
-        flight.to.toLocaleLowerCase() === to.toLocaleLowerCase()
+        flight.from.toLocaleLowerCase() === query.from.toLocaleLowerCase() &&
+        flight.to.toLocaleLowerCase() === query.to.toLocaleLowerCase()
     );
 
-    if (date) {
-      filtered = filtered.filter((flight) => flight.date === date);
+    if (query.date) {
+      filtered = filtered.filter((flight) => flight.date === query.date);
     }
 
     if (filtered.length === 0) {
       throw new NotFoundException({
         message: "No flights found for the specified route.",
-        from,
-        to,
-        date: date || "any",
+        from: query.from,
+        to: query.to,
+        date: query.date || "any",
       });
     }
 

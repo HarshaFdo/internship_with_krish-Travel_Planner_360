@@ -15,40 +15,40 @@ let AppService = AppService_1 = class AppService {
         this.flights = flights_data_1.FLIGHTS_DATA;
         this.logger = new common_1.Logger(AppService_1.name);
     }
-    getFlights(from, to, date) {
+    getFlights(query) {
         let results = [...this.flights];
-        if (from) {
-            results = results.filter((flight) => flight.from.toLocaleLowerCase() === from.toLocaleLowerCase());
+        if (query.from) {
+            results = results.filter((flight) => flight.from.toLocaleLowerCase() === query.from.toLocaleLowerCase());
         }
-        if (to) {
-            results = results.filter((flight) => flight.to.toLocaleLowerCase() === to.toLocaleLowerCase());
+        if (query.to) {
+            results = results.filter((flight) => flight.to.toLocaleLowerCase() === query.to.toLocaleLowerCase());
         }
-        if (date) {
-            results = results.filter((flight) => flight.date === date);
+        if (query.date) {
+            results = results.filter((flight) => flight.date === query.date);
         }
         this.logger.log(`Returning ${results.length} flights`);
         return {
             flights: results,
             metadata: {
                 total: results.length,
-                from: from || "any",
-                to: to || "any",
-                date: date || "any",
+                from: query.from || "any",
+                to: query.to || "any",
+                date: query.date || "any",
             },
         };
     }
-    getCheapestFlight(from, to, date) {
-        let filtered = this.flights.filter((flight) => flight.from.toLocaleLowerCase() === from.toLocaleLowerCase() &&
-            flight.to.toLocaleLowerCase() === to.toLocaleLowerCase());
-        if (date) {
-            filtered = filtered.filter((flight) => flight.date === date);
+    getCheapestFlight(query) {
+        let filtered = this.flights.filter((flight) => flight.from.toLocaleLowerCase() === query.from.toLocaleLowerCase() &&
+            flight.to.toLocaleLowerCase() === query.to.toLocaleLowerCase());
+        if (query.date) {
+            filtered = filtered.filter((flight) => flight.date === query.date);
         }
         if (filtered.length === 0) {
             throw new common_1.NotFoundException({
                 message: "No flights found for the specified route.",
-                from,
-                to,
-                date: date || "any",
+                from: query.from,
+                to: query.to,
+                date: query.date || "any",
             });
         }
         const cheapest = filtered.reduce((prev, current) => prev.price < current.price ? prev : current);

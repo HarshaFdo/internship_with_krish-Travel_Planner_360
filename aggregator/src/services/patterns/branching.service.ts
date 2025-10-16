@@ -24,6 +24,7 @@ export class BranchingService {
       // always we have to fetch flight and hotels in parallel(scatter-gather)
       this.logger.log(`[Branching] Fetching flights and hotels in parallel...`);
 
+      // Scatter-Gather
       const [flightResponse, hotelResponse] = await Promise.allSettled([
         this.clientsService.getFlights(from, to, date),
         this.clientsService.getHotels(to, date),

@@ -15,21 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const search_flights_dto_1 = require("./dto/search-flights.dto");
+const get_cheapest_flight_dto_1 = require("./dto/get-cheapest-flight.dto");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getFlights(from, to, date) {
-        return this.appService.getFlights(from, to, date);
+    getFlights(query) {
+        return this.appService.getFlights(query);
     }
-    getCheapestFlight(from, to, date) {
-        const cheapest = this.appService.getCheapestFlight(from, to);
+    getCheapestFlight(query) {
+        const cheapest = this.appService.getCheapestFlight(query);
         if (!cheapest) {
             throw new common_1.NotFoundException({
                 message: "No flight is found for your specified route.",
-                from,
-                to,
-                date: date || "any",
+                from: query.from,
+                to: query.to,
+                date: query.date || "any",
             });
         }
         const isLateArrival = this.appService.isLateArrival(cheapest.arriveTime);
@@ -45,20 +47,16 @@ let AppController = class AppController {
 exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)("flights"),
-    __param(0, (0, common_1.Query)("from")),
-    __param(1, (0, common_1.Query)("to")),
-    __param(2, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [search_flights_dto_1.SearchFlightDto]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getFlights", null);
 __decorate([
     (0, common_1.Get)("flights/cheapest"),
-    __param(0, (0, common_1.Query)("from")),
-    __param(1, (0, common_1.Query)("to")),
-    __param(2, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [get_cheapest_flight_dto_1.GetCheapestFlightDto]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getCheapestFlight", null);
 __decorate([

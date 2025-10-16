@@ -83,15 +83,15 @@ let ChainingService = ChainingService_1 = class ChainingService {
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error";
             const errorStack = error instanceof Error ? error.stack : "";
-            this.logger.error(`[Chaining] Error occurred: ${errorMessage}`);
-            return {
+            this.logger.error(`[Chaining] Error occurred: ${errorMessage}`, errorStack);
+            throw new common_1.HttpException({
+                statusCode: common_1.HttpStatus.INTERNAL_SERVER_ERROR,
                 error: errorMessage,
-                stack: errorStack,
                 metadata: {
                     pattern: "Chaining",
                     elapsedTimeMs: elapsedTime,
                 },
-            };
+            }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 };

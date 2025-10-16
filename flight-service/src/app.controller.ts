@@ -1,5 +1,7 @@
 import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
 import { AppService } from "./app.service";
+import { SearchFlightDto } from "./dto/search-flights.dto";
+import { GetCheapestFlightDto } from './dto/get-cheapest-flight.dto';
 
 @Controller()
 export class AppController {
@@ -7,27 +9,25 @@ export class AppController {
 
   @Get("flights")
   getFlights(
-    @Query("from") from?: string,
-    @Query("to") to?: string,
-    @Query("date") date?: string
+    @Query()
+    query: SearchFlightDto
   ) {
-    return this.appService.getFlights(from, to, date);
+    return this.appService.getFlights(query);
   }
 
   @Get("flights/cheapest")
   getCheapestFlight(
-    @Query("from") from: string,
-    @Query("to") to: string,
-    @Query("date") date?: string
+    @Query()
+      query: GetCheapestFlightDto
   ) {
-    const cheapest = this.appService.getCheapestFlight(from, to);
+    const cheapest = this.appService.getCheapestFlight(query);
 
     if (!cheapest) {
       throw new NotFoundException({
         message: "No flight is found for your specified route.",
-        from,
-        to,
-        date: date || "any",
+        from: query.from,
+        to: query.to,
+        date: query.date || "any",
       });
     }
 

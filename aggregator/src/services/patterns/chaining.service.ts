@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { ClientsService } from "../clients.service";
 
 @Injectable()
@@ -52,7 +58,7 @@ export class ChainingService {
 
       if (!hotelResponse.hotels) {
         this.logger.warn(`[Chaining] No hotel is found`);
-         throw new NotFoundException({
+        throw new NotFoundException({
           message: "No hotel is found for your specified destination.",
           from,
           to,
@@ -97,16 +103,22 @@ export class ChainingService {
         error instanceof Error ? error.message : "An unknown error";
       const errorStack = error instanceof Error ? error.stack : "";
 
-      this.logger.error(`[Chaining] Error occurred: ${errorMessage}`);
+      this.logger.error(
+        `[Chaining] Error occurred: ${errorMessage}`,
+        errorStack
+      );
 
-      return {
-        error: errorMessage,
-        stack: errorStack,
-        metadata: {
-          pattern: "Chaining",
-          elapsedTimeMs: elapsedTime,
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: errorMessage,
+          metadata: {
+            pattern: "Chaining",
+            elapsedTimeMs: elapsedTime,
+          },
         },
-      };
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }
