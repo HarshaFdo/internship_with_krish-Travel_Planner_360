@@ -12,7 +12,7 @@ var ScatterGatherService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterGatherService = void 0;
 const common_1 = require("@nestjs/common");
-const clients_service_1 = require("../clients.service");
+const HttpClientService_1 = require("../HttpClientService");
 let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
     constructor(clientsService) {
         this.clientsService = clientsService;
@@ -104,6 +104,6 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
 exports.ScatterGatherService = ScatterGatherService;
 exports.ScatterGatherService = ScatterGatherService = ScatterGatherService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [clients_service_1.ClientsService])
+    __metadata("design:paramtypes", [HttpClientService_1.ClientsService])
 ], ScatterGatherService);
 //# sourceMappingURL=scatter-gather.service.js.map

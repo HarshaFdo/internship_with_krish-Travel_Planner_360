@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ClientsService } from "./services/clients.service";
+import { ClientsService } from "./services/HttpClientService";
 import { HttpModule } from "@nestjs/axios";
 import { TripsV1Controller } from "./controllers/trips.v1.controller";
 import { ScatterGatherService } from "./services/patterns/scatter-gather.service";

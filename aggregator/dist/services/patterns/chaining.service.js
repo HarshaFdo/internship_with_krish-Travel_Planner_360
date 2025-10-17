@@ -12,7 +12,7 @@ var ChainingService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainingService = void 0;
 const common_1 = require("@nestjs/common");
-const clients_service_1 = require("../clients.service");
+const HttpClientService_1 = require("../HttpClientService");
 let ChainingService = ChainingService_1 = class ChainingService {
     constructor(clientsService) {
         this.clientsService = clientsService;
@@ -98,6 +98,6 @@ let ChainingService = ChainingService_1 = class ChainingService {
 exports.ChainingService = ChainingService;
 exports.ChainingService = ChainingService = ChainingService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [clients_service_1.ClientsService])
+    __metadata("design:paramtypes", [HttpClientService_1.ClientsService])
 ], ChainingService);
 //# sourceMappingURL=chaining.service.js.map

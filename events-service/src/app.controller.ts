@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { AppService } from "./app.service";
+import { SearchEventsDto } from "./dto/search-events.dto";
 
 @Controller()
 export class AppController {
@@ -7,11 +8,9 @@ export class AppController {
 
   @Get("events")
   getEvents(
-    @Query("destination") destination?: string,
-    @Query("date") date?: string,
-    @Query("category") category?: string
+    @Query() query: SearchEventsDto
   ) {
-    return this.appService.getEvents(destination, date, category);
+    return this.appService.getEvents(query);
   }
 
   @Get("healthy")

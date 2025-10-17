@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TripsV2Controller = void 0;
 const common_1 = require("@nestjs/common");
 const scatter_gather_service_1 = require("../services/patterns/scatter-gather.service");
-const clients_service_1 = require("../services/clients.service");
+const HttpClientService_1 = require("../services/HttpClientService");
 const metrics_service_1 = require("../services/metrics.service");
 const circuit_breaker_service_1 = require("../services/circuit-breaker.service");
 let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
@@ -61,7 +61,7 @@ __decorate([
 exports.TripsV2Controller = TripsV2Controller = TripsV2Controller_1 = __decorate([
     (0, common_1.Controller)("v2/trips"),
     __metadata("design:paramtypes", [scatter_gather_service_1.ScatterGatherService,
-        clients_service_1.ClientsService,
+        HttpClientService_1.ClientsService,
         metrics_service_1.MetricsService,
         circuit_breaker_service_1.CircuitBreakerService])
 ], TripsV2Controller);

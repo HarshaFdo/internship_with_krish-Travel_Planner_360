@@ -9,6 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { AppService } from "./app.service";
+import { GetWeatherDto } from "./dto/get-weather.dto";
 
 @Controller()
 export class AppController {
@@ -16,11 +17,10 @@ export class AppController {
 
   @Get("weather")
   async getWeather(
-    @Query("destination") destination?: string,
-    @Query("date") date?: string
+    @Query() query: GetWeatherDto
   ) {
     try {
-      return await this.appService.getWeather(destination ?? "", date ?? "");
+      return await this.appService.getWeather(query.destination, query.date);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Weather service error";

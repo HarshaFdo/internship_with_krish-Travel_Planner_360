@@ -12,7 +12,7 @@ var BranchingService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchingService = void 0;
 const common_1 = require("@nestjs/common");
-const clients_service_1 = require("../clients.service");
+const HttpClientService_1 = require("../HttpClientService");
 const location_utils_1 = require("../../utils/location-utils");
 let BranchingService = BranchingService_1 = class BranchingService {
     constructor(clientsService) {
@@ -85,6 +85,6 @@ let BranchingService = BranchingService_1 = class BranchingService {
 exports.BranchingService = BranchingService;
 exports.BranchingService = BranchingService = BranchingService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [clients_service_1.ClientsService])
+    __metadata("design:paramtypes", [HttpClientService_1.ClientsService])
 ], BranchingService);
 //# sourceMappingURL=branching.service.js.map

@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const clients_service_1 = require("./services/clients.service");
+const HttpClientService_1 = require("./services/HttpClientService");
 const axios_1 = require("@nestjs/axios");
 const trips_v1_controller_1 = require("./controllers/trips.v1.controller");
 const scatter_gather_service_1 = require("./services/patterns/scatter-gather.service");
@@ -32,7 +32,7 @@ exports.AppModule = AppModule = __decorate([
         ],
         controllers: [trips_v1_controller_1.TripsV1Controller, trips_v2_controller_1.TripsV2Controller, metrics_controller_1.MetricsController, circuit_breaker_controller_1.CircuitBreakerController],
         providers: [
-            clients_service_1.ClientsService,
+            HttpClientService_1.ClientsService,
             metrics_service_1.MetricsService,
             scatter_gather_service_1.ScatterGatherService,
             chaining_service_1.ChainingService,

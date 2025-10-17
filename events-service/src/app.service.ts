@@ -1,26 +1,27 @@
 import { Injectable } from "@nestjs/common";
 import { EVENTS_DATA } from "./data/events.data";
+import { SearchEventsDto } from "./dto/search-events.dto";
 
 @Injectable()
 export class AppService {
   private events = EVENTS_DATA;
 
-  getEvents(destination?: string, date?: string, category?: string ) {
+  getEvents(query: SearchEventsDto ) {
     let results = [...this.events];
 
-    if (destination) {
+    if (query.destination) {
       results = results.filter(
-        (event) => event.destination.toLowerCase() === destination.toLowerCase()
+        (event) => event.destination.toLowerCase() === query.destination!.toLowerCase()
       );
     }
 
-    if (date) {
-      results = results.filter((event) => event.date === date);
+    if (query.date) {
+      results = results.filter((event) => event.date === query.date);
     }
 
-    if (category) {
+    if (query.category) {
       results = results.filter(
-        (event) => event.category.toLowerCase() === category.toLowerCase()
+        (event) => event.category.toLowerCase() === query.category!.toLowerCase()
       );
     }
 
@@ -28,9 +29,9 @@ export class AppService {
       events: results,
       metadata: {
         total: results.length,
-        destination: destination || "any",
-        date: date || "any",
-        category: category || "any",
+        destination: query.destination || "any",
+        date: query.date || "any",
+        category: query.category || "any",
       },
     };
   }

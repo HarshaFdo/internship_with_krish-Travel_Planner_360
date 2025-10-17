@@ -15,13 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const get_weather_dto_1 = require("./dto/get-weather.dto");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    async getWeather(destination, date) {
+    async getWeather(query) {
         try {
-            return await this.appService.getWeather(destination ?? "", date ?? "");
+            return await this.appService.getWeather(query.destination, query.date);
         }
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Weather service error";
@@ -47,10 +48,9 @@ let AppController = class AppController {
 exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)("weather"),
-    __param(0, (0, common_1.Query)("destination")),
-    __param(1, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [get_weather_dto_1.GetWeatherDto]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getWeather", null);
 __decorate([

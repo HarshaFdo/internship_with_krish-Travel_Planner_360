@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ClientsService } from "../clients.service";
+import { ClientsService } from "../HttpClientService";
 
 @Injectable()
 export class ScatterGatherService {

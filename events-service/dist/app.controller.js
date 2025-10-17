@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const search_events_dto_1 = require("./dto/search-events.dto");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getEvents(destination, date, category) {
-        return this.appService.getEvents(destination, date, category);
+    getEvents(query) {
+        return this.appService.getEvents(query);
     }
     getHealthy() {
         return this.appService.getHealthy();
@@ -29,11 +30,9 @@ let AppController = class AppController {
 exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)("events"),
-    __param(0, (0, common_1.Query)("destination")),
-    __param(1, (0, common_1.Query)("date")),
-    __param(2, (0, common_1.Query)("category")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [search_events_dto_1.SearchEventsDto]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getEvents", null);
 __decorate([

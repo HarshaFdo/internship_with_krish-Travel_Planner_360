@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
-import { ClientsService } from "../clients.service";
+import { ClientsService } from "../HttpClientService";
 
 @Injectable()
 export class ChainingService {

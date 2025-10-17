@@ -15,21 +15,21 @@ let AppService = AppService_1 = class AppService {
         this.hostels = hostels_data_1.HOTELS_DATA;
         this.logger = new common_1.Logger(AppService_1.name);
     }
-    getHotels(destination, date, lateCheckIn) {
+    getHotels(query) {
         let results = [...this.hostels];
-        if (destination) {
-            results = results.filter((hotel) => hotel.destination.toLowerCase() === destination.toLowerCase());
+        if (query.destination) {
+            results = results.filter((hotel) => hotel.destination.toLowerCase() === query.destination.toLowerCase());
         }
-        if (lateCheckIn === "true") {
+        if (query.lateCheckIn === "true") {
             results = results.filter((hotel) => hotel.lateCheckIn === true);
         }
         return {
             hotels: results,
             metadata: {
                 total: results.length,
-                destination: destination || "any",
-                date: date || "any",
-                lateCheckInOnly: lateCheckIn === "true",
+                destination: query.destination || "any",
+                date: query.date || "any",
+                lateCheckInOnly: query.lateCheckIn === "true",
             },
         };
     }

@@ -13,24 +13,24 @@ let AppService = class AppService {
     constructor() {
         this.events = events_data_1.EVENTS_DATA;
     }
-    getEvents(destination, date, category) {
+    getEvents(query) {
         let results = [...this.events];
-        if (destination) {
-            results = results.filter((event) => event.destination.toLowerCase() === destination.toLowerCase());
+        if (query.destination) {
+            results = results.filter((event) => event.destination.toLowerCase() === query.destination.toLowerCase());
         }
-        if (date) {
-            results = results.filter((event) => event.date === date);
+        if (query.date) {
+            results = results.filter((event) => event.date === query.date);
         }
-        if (category) {
-            results = results.filter((event) => event.category.toLowerCase() === category.toLowerCase());
+        if (query.category) {
+            results = results.filter((event) => event.category.toLowerCase() === query.category.toLowerCase());
         }
         return {
             events: results,
             metadata: {
                 total: results.length,
-                destination: destination || "any",
-                date: date || "any",
-                category: category || "any",
+                destination: query.destination || "any",
+                date: query.date || "any",
+                category: query.category || "any",
             },
         };
     }

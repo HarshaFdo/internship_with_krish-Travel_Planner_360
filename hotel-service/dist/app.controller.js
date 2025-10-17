@@ -15,20 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const search_hotels_dto_1 = require("./dto/search-hotels.dto");
+const get_cheapest_hotels_1 = require("./dto/get-cheapest-hotels");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getHotels(destination, date, lateCheckIn) {
-        return this.appService.getHotels(destination, date, lateCheckIn);
+    getHotels(query) {
+        return this.appService.getHotels(query);
     }
-    getCheapestHotel(destination, lateCheckIn) {
-        const isLateCheckIn = lateCheckIn === "true";
-        const cheapest = this.appService.getCheapestHotel(destination, isLateCheckIn);
+    getCheapestHotel(query) {
+        const isLateCheckIn = query.lateCheckIn === "true";
+        const cheapest = this.appService.getCheapestHotel(query.destination, isLateCheckIn);
         if (!cheapest) {
             throw new common_1.NotFoundException({
                 message: "No hotel is found for your specified destination.",
-                destination,
+                destination: query.destination,
                 lateCheckInOnly: isLateCheckIn,
             });
         }
@@ -41,19 +43,16 @@ let AppController = class AppController {
 exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)("hotels"),
-    __param(0, (0, common_1.Query)("destination")),
-    __param(1, (0, common_1.Query)("date")),
-    __param(2, (0, common_1.Query)("lateCheckIn")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [search_hotels_dto_1.SearchHotelsDto]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getHotels", null);
 __decorate([
     (0, common_1.Get)("hotels/cheapest"),
-    __param(0, (0, common_1.Query)("destination")),
-    __param(1, (0, common_1.Query)("lateCheckIn")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [get_cheapest_hotels_1.GetCheapestHotelsDto]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getCheapestHotel", null);
 __decorate([

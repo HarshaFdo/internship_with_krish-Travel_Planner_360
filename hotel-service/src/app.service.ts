@@ -1,21 +1,22 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { HOTELS_DATA } from "./data/hostels.data";
+import { SearchHotelsDto } from './dto/search-hotels.dto';
 
 @Injectable()
 export class AppService {
   private hostels = HOTELS_DATA;
   private readonly logger = new Logger(AppService.name);
 
-  getHotels(destination?: string, date?: string, lateCheckIn?: string) {
+  getHotels(query: SearchHotelsDto) {
     let results = [...this.hostels];
 
-    if (destination) {
+    if (query.destination) {
       results = results.filter(
-        (hotel) => hotel.destination.toLowerCase() === destination.toLowerCase()
+        (hotel) => hotel.destination.toLowerCase() === query.destination!.toLowerCase()
       );
     }
 
-    if (lateCheckIn === "true") {
+    if (query.lateCheckIn === "true") {
       results = results.filter((hotel) => hotel.lateCheckIn === true);
     }
 
@@ -23,9 +24,9 @@ export class AppService {
       hotels: results,
       metadata: {
         total: results.length,
-        destination: destination || "any",
-        date: date || "any",
-        lateCheckInOnly: lateCheckIn === "true",
+        destination: query.destination || "any",
+        date: query.date || "any",
+        lateCheckInOnly: query.lateCheckIn === "true",
       },
     };
   }

@@ -6,7 +6,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ScatterGatherService } from "../services/patterns/scatter-gather.service";
-import { ClientsService } from "../services/clients.service";
+import { ClientsService } from "../services/HttpClientService";
 import { MetricsService } from "../services/metrics.service";
 import { CircuitBreakerService } from "../services/circuit-breaker.service";
 

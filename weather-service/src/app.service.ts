@@ -27,7 +27,7 @@ export class AppService {
     );
   }
 
-  async getWeather(destination: string, date: string) {
+  async getWeather(destination: string, date?: string) {
     try {
       // Check for failures
       await this.simulateFailureInjection();

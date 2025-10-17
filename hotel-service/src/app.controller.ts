@@ -1,5 +1,7 @@
 import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
 import { AppService } from "./app.service";
+import { SearchHotelsDto } from "./dto/search-hotels.dto";
+import { GetCheapestHotelsDto } from "./dto/get-cheapest-hotels";
 
 @Controller()
 export class AppController {
@@ -7,28 +9,25 @@ export class AppController {
 
   @Get("hotels")
   getHotels(
-    @Query("destination") destination?: string,
-    @Query("date") date?: string,
-    @Query("lateCheckIn") lateCheckIn?: string
+    @Query() query: SearchHotelsDto
   ) {
-    return this.appService.getHotels(destination, date, lateCheckIn);
+    return this.appService.getHotels(query);
   }
 
   @Get("hotels/cheapest")
   getCheapestHotel(
-    @Query("destination") destination: string,
-    @Query("lateCheckIn") lateCheckIn?: string
+    @Query() query: GetCheapestHotelsDto
   ) {
-    const isLateCheckIn = lateCheckIn === "true";
+    const isLateCheckIn = query.lateCheckIn === "true";
     const cheapest = this.appService.getCheapestHotel(
-      destination,
+      query.destination,
       isLateCheckIn
     );
 
     if (!cheapest) {
       throw new NotFoundException({
         message: "No hotel is found for your specified destination.",
-        destination,
+        destination: query.destination,
         lateCheckInOnly: isLateCheckIn,
       });
     }
