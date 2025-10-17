@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ClientsService } from "../HttpClientService";
+import { ClientsService } from "../HttpClient.service";
 import { isCoastalDestination } from "../../utils/location-utils";
 
 @Injectable()

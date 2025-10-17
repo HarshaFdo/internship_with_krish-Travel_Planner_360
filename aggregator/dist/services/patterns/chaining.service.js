@@ -12,10 +12,10 @@ var ChainingService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainingService = void 0;
 const common_1 = require("@nestjs/common");
-const HttpClientService_1 = require("../HttpClientService");
+const HttpClient_service_1 = require("../HttpClient.service");
 let ChainingService = ChainingService_1 = class ChainingService {
-    constructor(clientsService) {
-        this.clientsService = clientsService;
+    constructor(httpClientsService) {
+        this.httpClientsService = httpClientsService;
         this.logger = new common_1.Logger(ChainingService_1.name);
     }
     async execute(from, to, date) {
@@ -25,7 +25,7 @@ let ChainingService = ChainingService_1 = class ChainingService {
         try {
             // step 1: getting the cheapest flight
             this.logger.log("[Chaining] 1. Fetching the cheapest fright...");
-            const flightResponse = await this.clientsService.getCheapestFlight(from, to, date);
+            const flightResponse = await this.httpClientsService.getCheapestFlight(from, to, date);
             if (!flightResponse.flights) {
                 this.logger.warn(`[Chaining] No flight is found`);
                 throw new common_1.NotFoundException({
@@ -40,7 +40,7 @@ let ChainingService = ChainingService_1 = class ChainingService {
             this.logger.log(`[Chaining] 1- complete. Fetched the cheapest flight: ${flight.id} - Arrival: ${flight.arriveTime} - Late Arrival: ${isLateArrival}`);
             // step 2: getting the cheapest hotel based on the arrival time.
             this.logger.log(`[Chaining] 2. Fetching the cheapest hotel (lateArrival: ${isLateArrival}) ...`);
-            const hotelResponse = await this.clientsService.getCheapestHotel(to, isLateArrival);
+            const hotelResponse = await this.httpClientsService.getCheapestHotel(to, isLateArrival);
             if (!hotelResponse.hotels) {
                 this.logger.warn(`[Chaining] No hotel is found`);
                 throw new common_1.NotFoundException({
@@ -98,6 +98,6 @@ let ChainingService = ChainingService_1 = class ChainingService {
 exports.ChainingService = ChainingService;
 exports.ChainingService = ChainingService = ChainingService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClientService_1.ClientsService])
+    __metadata("design:paramtypes", [HttpClient_service_1.HttpClientsService])
 ], ChainingService);
 //# sourceMappingURL=chaining.service.js.map

@@ -3,19 +3,15 @@ import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, MinLe
 
 
 export class SearchFlightDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @MinLength(2)
-  @MaxLength(50)
   from!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @MinLength(2)
-  @MaxLength(50)
   to!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString({}, {message: 'Date must be in YYYY-MM-DD format'})
   date!: string;
 }

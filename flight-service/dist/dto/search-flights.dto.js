@@ -15,21 +15,17 @@ class SearchFlightDto {
 }
 exports.SearchFlightDto = SearchFlightDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
 ], SearchFlightDto.prototype, "from", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
 ], SearchFlightDto.prototype, "to", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)({}, { message: 'Date must be in YYYY-MM-DD format' }),
     __metadata("design:type", String)
 ], SearchFlightDto.prototype, "date", void 0);

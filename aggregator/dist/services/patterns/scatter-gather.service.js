@@ -9,10 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ScatterGatherService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterGatherService = void 0;
 const common_1 = require("@nestjs/common");
-const HttpClientService_1 = require("../HttpClientService");
+const HttpClient_service_1 = require("../HttpClient.service");
 let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
     constructor(clientsService) {
         this.clientsService = clientsService;
@@ -104,6 +105,6 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
 exports.ScatterGatherService = ScatterGatherService;
 exports.ScatterGatherService = ScatterGatherService = ScatterGatherService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClientService_1.ClientsService])
+    __metadata("design:paramtypes", [typeof (_a = typeof HttpClient_service_1.ClientsService !== "undefined" && HttpClient_service_1.ClientsService) === "function" ? _a : Object])
 ], ScatterGatherService);
 //# sourceMappingURL=scatter-gather.service.js.map

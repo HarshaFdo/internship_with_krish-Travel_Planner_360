@@ -6,7 +6,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { ScatterGatherService } from "../services/patterns/scatter-gather.service";
-import { ClientsService } from "../services/HttpClientService";
+import { HttpClientsService } from "../services/HttpClient.service";
 import { MetricsService } from "../services/metrics.service";
 import { CircuitBreakerService } from "../services/circuit-breaker.service";
 import { TripSearchDto } from "../dto/trip-search.dto";
@@ -17,7 +17,7 @@ export class TripsV2Controller {
 
   constructor(
     private readonly scatterGatherService: ScatterGatherService,
-    private readonly clientsService: ClientsService,
+    private readonly clientsService: HttpClientsService,
     private readonly metricsService: MetricsService,
     private readonly circuitBreakerService: CircuitBreakerService
   ) {}

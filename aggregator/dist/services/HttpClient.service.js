@@ -27,13 +27,18 @@ let HttpClientsService = HttpClientsService_1 = class HttpClientsService {
     }
     async fetchFromService(service, endpoint, params) {
         const url = `${this.SERVICE_URL[service]}${endpoint}`;
+        // Filter the undefined values to avoid sending them as query parameters.
+        const cleanParams = params
+            ? Object.fromEntries(Object.entries(params).filter(([_, v]) => v !== undefined))
+            : undefined;
         try {
-            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(url, { params }));
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(url, { params: cleanParams }));
             return response.data;
         }
         catch (error) {
-            this.logger.error(`Error fetching ${url}`, error);
-            throw new common_1.InternalServerErrorException("Failed to fetch remote service");
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error fetching from ${service}${endpoint}: ${message}`);
+            throw new common_1.InternalServerErrorException(`Failed to fetch from ${service} service`);
         }
     }
     async getFlights(from, to, date) {
@@ -47,20 +52,23 @@ let HttpClientsService = HttpClientsService_1 = class HttpClientsService {
         });
     }
     async getHotels(destination, date, lateCheckIn) {
-        const params = { destination, date };
-        return this.fetchFromService("hotels", "/hotels", params);
+        return this.fetchFromService("hotels", "/hotels", {
+            destination,
+            date,
+            lateCheckIn,
+        });
     }
     async getCheapestHotel(destination, lateCheckIn) {
-        const params = { destination };
-        return this.fetchFromService("hotels", "/hotels/cheapest", params);
+        return this.fetchFromService("hotels", "/hotels/cheapest", {
+            destination,
+            lateCheckIn,
+        });
     }
     async getWeather(destination, date) {
-        const params = { destination, date };
-        return this.fetchFromService("weather", "/weather", params);
+        return this.fetchFromService("weather", "/weather", { destination, date });
     }
     async getEvents(destination, date) {
-        const params = { destination, date };
-        return this.fetchFromService("events", "/events", params);
+        return this.fetchFromService("events", "/events", { destination, date });
     }
 };
 exports.HttpClientsService = HttpClientsService;
@@ -68,4 +76,4 @@ exports.HttpClientsService = HttpClientsService = HttpClientsService_1 = __decor
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [axios_1.HttpService])
 ], HttpClientsService);
-//# sourceMappingURL=HttpClientService.js.map
+//# sourceMappingURL=HttpClient.service.js.map

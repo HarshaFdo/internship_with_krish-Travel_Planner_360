@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ClientsService } from "./services/HttpClientService";
+import { HttpClientsService } from "./services/HttpClient.service";
 import { HttpModule } from "@nestjs/axios";
 import { TripsV1Controller } from "./controllers/trips.v1.controller";
 import { ScatterGatherService } from "./services/patterns/scatter-gather.service";
@@ -20,7 +20,7 @@ import { CircuitBreakerController } from "./controllers/circuit-breaker.controll
   ],
   controllers: [TripsV1Controller, TripsV2Controller, MetricsController, CircuitBreakerController],
   providers: [
-    ClientsService,
+    HttpClientsService,
     MetricsService,
     ScatterGatherService,
     ChainingService,
