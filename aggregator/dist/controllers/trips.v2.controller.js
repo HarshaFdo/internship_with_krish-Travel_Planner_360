@@ -19,6 +19,7 @@ const scatter_gather_service_1 = require("../services/patterns/scatter-gather.se
 const HttpClientService_1 = require("../services/HttpClientService");
 const metrics_service_1 = require("../services/metrics.service");
 const circuit_breaker_service_1 = require("../services/circuit-breaker.service");
+const trip_search_dto_1 = require("../dto/trip-search.dto");
 let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
     constructor(scatterGatherService, clientsService, metricsService, circuitBreakerService) {
         this.scatterGatherService = scatterGatherService;
@@ -28,15 +29,12 @@ let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
         this.logger = new common_1.Logger(TripsV2Controller_1.name);
     }
     // for scatter-gather pattern
-    async search(from, to, date) {
-        if (!from || !to || !date) {
-            throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
-        }
+    async search(query) {
         this.metricsService.trackRequest("v2", "/v2/trips/search");
-        const v1Response = await this.scatterGatherService.execute(from, to, date);
-        this.logger.log(`[V2] /search called with from=${from}, to=${to}, date=${date}`);
+        const v1Response = await this.scatterGatherService.execute(query.from, query.to, query.date);
+        this.logger.log(`[V2] /search called with from=${query.from}, to=${query.to}, date=${query.date}`);
         //  circuit breaker for weather service
-        const weather = await this.circuitBreakerService.execute(() => this.clientsService.getWeather(to, date), () => ({
+        const weather = await this.circuitBreakerService.execute(() => this.clientsService.getWeather(query.to, query.date), () => ({
             summary: "unavailable",
             degraded: true,
             error: "Weather service temporarily unavailable",
@@ -51,11 +49,9 @@ let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
 exports.TripsV2Controller = TripsV2Controller;
 __decorate([
     (0, common_1.Get)("search"),
-    __param(0, (0, common_1.Query)("from")),
-    __param(1, (0, common_1.Query)("to")),
-    __param(2, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [trip_search_dto_1.TripSearchDto]),
     __metadata("design:returntype", Promise)
 ], TripsV2Controller.prototype, "search", null);
 exports.TripsV2Controller = TripsV2Controller = TripsV2Controller_1 = __decorate([

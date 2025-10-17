@@ -9,28 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SearchFlightDto = void 0;
+exports.TripSearchDto = void 0;
 const class_validator_1 = require("class-validator");
-class SearchFlightDto {
+class TripSearchDto {
 }
-exports.SearchFlightDto = SearchFlightDto;
+exports.TripSearchDto = TripSearchDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(50),
+    (0, class_validator_1.IsNotEmpty)({ message: 'from is required' }),
+    (0, class_validator_1.IsString)({ message: 'from must be a valid string' }),
     __metadata("design:type", String)
-], SearchFlightDto.prototype, "from", void 0);
+], TripSearchDto.prototype, "from", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(50),
+    (0, class_validator_1.IsNotEmpty)({ message: 'to is required' }),
+    (0, class_validator_1.IsString)({ message: 'from must be a valid string' }),
     __metadata("design:type", String)
-], SearchFlightDto.prototype, "to", void 0);
+], TripSearchDto.prototype, "to", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'from is required' }),
     (0, class_validator_1.IsDateString)({}, { message: 'Date must be in YYYY-MM-DD format' }),
     __metadata("design:type", String)
-], SearchFlightDto.prototype, "date", void 0);
-//# sourceMappingURL=search-flights.dto.js.map
+], TripSearchDto.prototype, "date", void 0);
+//# sourceMappingURL=trip-search.dto.js.map

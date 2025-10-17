@@ -15,10 +15,8 @@ class SearchEventsDto {
 }
 exports.SearchEventsDto = SearchEventsDto;
 __decorate([
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2, { message: "Destination must be at least 2 characters" }),
-    (0, class_validator_1.MaxLength)(100, { message: "Destination must not exceed 100 characters" }),
     __metadata("design:type", String)
 ], SearchEventsDto.prototype, "destination", void 0);
 __decorate([
@@ -27,10 +25,8 @@ __decorate([
     __metadata("design:type", String)
 ], SearchEventsDto.prototype, "date", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2, { message: "Category must be at least 2 characters" }),
-    (0, class_validator_1.MaxLength)(50, { message: "Category must not exceed 50 characters" }),
     __metadata("design:type", String)
 ], SearchEventsDto.prototype, "category", void 0);
 //# sourceMappingURL=search-events.dto.js.map

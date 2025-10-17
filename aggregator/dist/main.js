@@ -6,6 +6,15 @@ const common_1 = require("@nestjs/common");
 async function bootstrap() {
     const logger = new common_1.Logger("Bootstrap");
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    // Enable global validation
+    app.useGlobalPipes(new common_1.ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: false,
+        transformOptions: {
+            enableImplicitConversion: true,
+        },
+    }));
     await app.listen(3000);
     logger.log(`Aggregator service is running on: http://localhost:3000`);
     logger.log("");

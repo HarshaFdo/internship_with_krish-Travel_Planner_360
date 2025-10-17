@@ -11,7 +11,7 @@ export class AppService {
 
     if (query.destination) {
       results = results.filter(
-        (event) => event.destination.toLowerCase() === query.destination!.toLowerCase()
+        (event) => event.destination.toLowerCase() === query.destination.toLowerCase()
       );
     }
 
@@ -21,7 +21,7 @@ export class AppService {
 
     if (query.category) {
       results = results.filter(
-        (event) => event.category.toLowerCase() === query.category!.toLowerCase()
+        (event) => event.category.toLowerCase() === query.category.toLowerCase()
       );
     }
 

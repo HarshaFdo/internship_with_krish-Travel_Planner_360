@@ -1,21 +1,34 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { Logger } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
 
   const app = await NestFactory.create(AppModule);
+
+  // Enable global validation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: false,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    })
+  );
+
   await app.listen(3000);
 
   logger.log(`Aggregator service is running on: http://localhost:3000`);
-  logger.log("")
+  logger.log("");
 
   logger.log(`V1 API endpoints:`);
   logger.log("   - GET /v1/trips/search");
   logger.log("   - GET /v1/trips/cheapest-route");
   logger.log("   - GET /v1/trips/contextual");
-  logger.log("")
+  logger.log("");
 
   logger.log("V2 API Endpoints (Strangler Pattern):");
   logger.log("   - GET /v2/trips/search (+ weather)");

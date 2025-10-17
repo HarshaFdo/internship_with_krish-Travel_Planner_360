@@ -9,6 +9,7 @@ import { ScatterGatherService } from "../services/patterns/scatter-gather.servic
 import { ClientsService } from "../services/HttpClientService";
 import { MetricsService } from "../services/metrics.service";
 import { CircuitBreakerService } from "../services/circuit-breaker.service";
+import { TripSearchDto } from "../dto/trip-search.dto";
 
 @Controller("v2/trips")
 export class TripsV2Controller {
@@ -23,28 +24,22 @@ export class TripsV2Controller {
 
   // for scatter-gather pattern
   @Get("search")
-  async search(
-    @Query("from") from: string,
-    @Query("to") to: string,
-    @Query("date") date: string
-  ) {
-    if (!from || !to || !date) {
-      throw new BadRequestException(
-        "Missing required query parameters: from, to, date"
-      );
-    }
+  async search(@Query() query: TripSearchDto) {
+    this.metricsService.trackRequest("v2", "/v2/trips/search");
 
-    this.metricsService.trackRequest("v2","/v2/trips/search");
-
-    const v1Response = await this.scatterGatherService.execute(from, to, date);
+    const v1Response = await this.scatterGatherService.execute(
+      query.from,
+      query.to,
+      query.date
+    );
 
     this.logger.log(
-      `[V2] /search called with from=${from}, to=${to}, date=${date}`
+      `[V2] /search called with from=${query.from}, to=${query.to}, date=${query.date}`
     );
 
     //  circuit breaker for weather service
     const weather = await this.circuitBreakerService.execute(
-      () => this.clientsService.getWeather(to, date),
+      () => this.clientsService.getWeather(query.to!, query.date!),
       () => ({
         summary: "unavailable",
         degraded: true,
