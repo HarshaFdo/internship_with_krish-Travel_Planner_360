@@ -87,6 +87,7 @@ let AppService = AppService_1 = class AppService {
     // Update delay dynamically
     updateDelay(delayMs) {
         this.serviceDelayDuration = delayMs;
+        this.logger.log(`Delay updated to ${delayMs}ms`);
         return {
             message: "Delay updated successfully",
             newDelay: this.serviceDelayDuration,

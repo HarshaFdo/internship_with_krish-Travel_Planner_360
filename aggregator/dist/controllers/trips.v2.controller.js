@@ -21,9 +21,9 @@ const metrics_service_1 = require("../services/metrics.service");
 const circuit_breaker_service_1 = require("../services/circuit-breaker.service");
 const trip_search_dto_1 = require("../dto/trip-search.dto");
 let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
-    constructor(scatterGatherService, clientsService, metricsService, circuitBreakerService) {
+    constructor(scatterGatherService, httpClientsService, metricsService, circuitBreakerService) {
         this.scatterGatherService = scatterGatherService;
-        this.clientsService = clientsService;
+        this.httpClientsService = httpClientsService;
         this.metricsService = metricsService;
         this.circuitBreakerService = circuitBreakerService;
         this.logger = new common_1.Logger(TripsV2Controller_1.name);
@@ -34,7 +34,7 @@ let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
         const v1Response = await this.scatterGatherService.execute(query.from, query.to, query.date);
         this.logger.log(`[V2] /search called with from=${query.from}, to=${query.to}, date=${query.date}`);
         //  circuit breaker for weather service
-        const weather = await this.circuitBreakerService.execute(() => this.clientsService.getWeather(query.to, query.date), () => ({
+        const weather = await this.circuitBreakerService.execute(() => this.httpClientsService.getWeather(query.to, query.date), () => ({
             summary: "unavailable",
             degraded: true,
             error: "Weather service temporarily unavailable",

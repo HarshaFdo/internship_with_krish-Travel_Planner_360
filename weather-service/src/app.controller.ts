@@ -7,9 +7,12 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { GetWeatherDto } from "./dto/get-weather.dto";
+import { UpdateDelayDto } from "./dto/update-delay.dto";
 
 @Controller()
 export class AppController {
@@ -43,8 +46,8 @@ export class AppController {
 
   // Endpoint to update delay
   @Put("config/delay")
-  updateDelay(@Body("delayMs") delayMs: number) {
-    return this.appService.updateDelay(delayMs);
+  updateDelay(@Body() updateDelayDto: UpdateDelayDto) {
+    return this.appService.updateDelay(updateDelayDto.delayMs);
   }
 
   // Endpoint to reset the delay to orginal

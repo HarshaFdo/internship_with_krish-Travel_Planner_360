@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ClientsService } from "../HttpClient.service";
+import { HttpClientsService } from '../HttpClient.service';
 
 @Injectable()
 export class ScatterGatherService {
   private readonly logger = new Logger(ScatterGatherService.name);
   private readonly TIMEOUT_MS = 1000;
 
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(private readonly HttpClientsService: HttpClientsService) {}
 
   async execute(from: string, to: string, date: string) {
     const startTime = Date.now();
@@ -14,7 +14,7 @@ export class ScatterGatherService {
       `[Scatter-Gather] is starting parallel calles for ${from} -> ${to} on ${date} `
     );
 
-    const flightPromise = this.clientsService
+    const flightPromise = this.HttpClientsService
       .getFlights(from, to, date)
       .then((data) => ({ data, service: "flight", success: true }))
       .catch((error) => ({
@@ -24,7 +24,7 @@ export class ScatterGatherService {
         error: error.message,
       }));
 
-    const hotelPromise = this.clientsService
+    const hotelPromise = this.HttpClientsService
       .getHotels(to, date)
       .then((data) => ({ data, service: "hotel", success: true }))
       .catch((error) => ({

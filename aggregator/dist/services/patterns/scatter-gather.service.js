@@ -9,21 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ScatterGatherService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterGatherService = void 0;
 const common_1 = require("@nestjs/common");
 const HttpClient_service_1 = require("../HttpClient.service");
 let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
-    constructor(clientsService) {
-        this.clientsService = clientsService;
+    constructor(HttpClientsService) {
+        this.HttpClientsService = HttpClientsService;
         this.logger = new common_1.Logger(ScatterGatherService_1.name);
         this.TIMEOUT_MS = 1000;
     }
     async execute(from, to, date) {
         const startTime = Date.now();
         this.logger.log(`[Scatter-Gather] is starting parallel calles for ${from} -> ${to} on ${date} `);
-        const flightPromise = this.clientsService
+        const flightPromise = this.HttpClientsService
             .getFlights(from, to, date)
             .then((data) => ({ data, service: "flight", success: true }))
             .catch((error) => ({
@@ -32,7 +31,7 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
             success: false,
             error: error.message,
         }));
-        const hotelPromise = this.clientsService
+        const hotelPromise = this.HttpClientsService
             .getHotels(to, date)
             .then((data) => ({ data, service: "hotel", success: true }))
             .catch((error) => ({
@@ -105,6 +104,6 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
 exports.ScatterGatherService = ScatterGatherService;
 exports.ScatterGatherService = ScatterGatherService = ScatterGatherService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof HttpClient_service_1.ClientsService !== "undefined" && HttpClient_service_1.ClientsService) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [HttpClient_service_1.HttpClientsService])
 ], ScatterGatherService);
 //# sourceMappingURL=scatter-gather.service.js.map

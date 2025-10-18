@@ -109,6 +109,7 @@ export class AppService {
   // Update delay dynamically
   updateDelay(delayMs: number) {
     this.serviceDelayDuration = delayMs;
+    this.logger.log(`Delay updated to ${delayMs}ms`);
     return {
       message: "Delay updated successfully",
       newDelay: this.serviceDelayDuration,

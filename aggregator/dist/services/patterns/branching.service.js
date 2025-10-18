@@ -9,15 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var BranchingService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchingService = void 0;
 const common_1 = require("@nestjs/common");
 const HttpClient_service_1 = require("../HttpClient.service");
 const location_utils_1 = require("../../utils/location-utils");
 let BranchingService = BranchingService_1 = class BranchingService {
-    constructor(clientsService) {
-        this.clientsService = clientsService;
+    constructor(httpClientsService) {
+        this.httpClientsService = httpClientsService;
         this.logger = new common_1.Logger(BranchingService_1.name);
     }
     async execute(from, to, date) {
@@ -31,8 +30,8 @@ let BranchingService = BranchingService_1 = class BranchingService {
             this.logger.log(`[Branching] Fetching flights and hotels in parallel...`);
             // Scatter-Gather
             const [flightResponse, hotelResponse] = await Promise.allSettled([
-                this.clientsService.getFlights(from, to, date),
-                this.clientsService.getHotels(to, date),
+                this.httpClientsService.getFlights(from, to, date),
+                this.httpClientsService.getHotels(to, date),
             ]);
             const response = {
                 flights: flightResponse.status === "fulfilled"
@@ -45,7 +44,7 @@ let BranchingService = BranchingService_1 = class BranchingService {
             //based on the destination(coastal/inland) we have to fetch the activities
             if (isCoastal) {
                 this.logger.log(`[Branching] Destination is Coastal - fetching events for ${to}...`);
-                const eventResponse = await this.clientsService.getEvents(to, date);
+                const eventResponse = await this.httpClientsService.getEvents(to, date);
                 response.events = eventResponse.events || [];
                 this.logger.log(`[Branching] Fetched the events - ${response.events.length} events that found.`);
             }
@@ -86,6 +85,6 @@ let BranchingService = BranchingService_1 = class BranchingService {
 exports.BranchingService = BranchingService;
 exports.BranchingService = BranchingService = BranchingService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof HttpClient_service_1.ClientsService !== "undefined" && HttpClient_service_1.ClientsService) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [HttpClient_service_1.HttpClientsService])
 ], BranchingService);
 //# sourceMappingURL=branching.service.js.map

@@ -17,7 +17,7 @@ export class TripsV2Controller {
 
   constructor(
     private readonly scatterGatherService: ScatterGatherService,
-    private readonly clientsService: HttpClientsService,
+    private readonly httpClientsService: HttpClientsService,
     private readonly metricsService: MetricsService,
     private readonly circuitBreakerService: CircuitBreakerService
   ) {}
@@ -39,7 +39,7 @@ export class TripsV2Controller {
 
     //  circuit breaker for weather service
     const weather = await this.circuitBreakerService.execute(
-      () => this.clientsService.getWeather(query.to!, query.date!),
+      () => this.httpClientsService.getWeather(query.to!, query.date!),
       () => ({
         summary: "unavailable",
         degraded: true,

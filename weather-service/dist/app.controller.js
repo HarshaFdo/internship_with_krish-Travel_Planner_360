@@ -16,6 +16,7 @@ exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
 const get_weather_dto_1 = require("./dto/get-weather.dto");
+const update_delay_dto_1 = require("./dto/update-delay.dto");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
@@ -37,8 +38,8 @@ let AppController = class AppController {
         return this.appService.getHealthy();
     }
     // Endpoint to update delay
-    updateDelay(delayMs) {
-        return this.appService.updateDelay(delayMs);
+    updateDelay(updateDelayDto) {
+        return this.appService.updateDelay(updateDelayDto.delayMs);
     }
     // Endpoint to reset the delay to orginal
     resetDelay() {
@@ -61,9 +62,9 @@ __decorate([
 ], AppController.prototype, "getHealthy", null);
 __decorate([
     (0, common_1.Put)("config/delay"),
-    __param(0, (0, common_1.Body)("delayMs")),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [update_delay_dto_1.UpdateDelayDto]),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "updateDelay", null);
 __decorate([
