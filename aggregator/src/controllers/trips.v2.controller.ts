@@ -27,30 +27,20 @@ export class TripsV2Controller {
   async search(@Query() query: TripSearchDto) {
     this.metricsService.trackRequest("v2", "/v2/trips/search");
 
-    const v1Response = await this.scatterGatherService.execute(
-      query.from,
-      query.to,
-      query.date
-    );
-
     this.logger.log(
       `[V2] /search called with from=${query.from}, to=${query.to}, date=${query.date}`
     );
 
-    //  circuit breaker for weather service
-    const weather = await this.circuitBreakerService.execute(
-      () => this.httpClientsService.getWeather(query.to!, query.date!),
-      () => ({
-        summary: "unavailable",
-        degraded: true,
-        error: "Weather service temporarily unavailable",
-      }),
-      "weather-service"
+    // pass true value to sinclude weather for v2 
+    const response = await this.scatterGatherService.execute(
+     query.from!,
+     query.to!,
+     query.date!,
+     true // enable weather for v2
     );
 
     return {
-      ...v1Response,
-      weather,
+      ...response,
       version: "v2",
     };
   }

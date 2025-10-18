@@ -13,17 +13,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterGatherService = void 0;
 const common_1 = require("@nestjs/common");
 const HttpClient_service_1 = require("../HttpClient.service");
+const circuit_breaker_service_1 = require("../circuit-breaker.service");
 let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
-    constructor(HttpClientsService) {
+    constructor(HttpClientsService, circuitBreakerService) {
         this.HttpClientsService = HttpClientsService;
+        this.circuitBreakerService = circuitBreakerService;
         this.logger = new common_1.Logger(ScatterGatherService_1.name);
         this.TIMEOUT_MS = 1000;
     }
-    async execute(from, to, date) {
+    async execute(from, to, date, includeWeather = false) {
         const startTime = Date.now();
-        this.logger.log(`[Scatter-Gather] is starting parallel calles for ${from} -> ${to} on ${date} `);
-        const flightPromise = this.HttpClientsService
-            .getFlights(from, to, date)
+        this.logger.log(`[Scatter-Gather] Starting parallel calls for ${from} -> ${to} on ${date} (includeWeather: ${includeWeather})`);
+        const flightPromise = this.HttpClientsService.getFlights(from, to, date)
             .then((data) => ({ data, service: "flight", success: true }))
             .catch((error) => ({
             data: null,
@@ -31,8 +32,7 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
             success: false,
             error: error.message,
         }));
-        const hotelPromise = this.HttpClientsService
-            .getHotels(to, date)
+        const hotelPromise = this.HttpClientsService.getHotels(to, date)
             .then((data) => ({ data, service: "hotel", success: true }))
             .catch((error) => ({
             data: null,
@@ -50,16 +50,54 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
             timeoutPromise,
         ]);
         const elapsedTime = Date.now() - startTime;
+        let response;
         if (results && typeof results === "object" && "timeout" in results) {
             this.logger.warn(`[Scatter-Gather] Timeout occurred after ${this.TIMEOUT_MS} ms - returning partial results`);
             const partialResults = await Promise.allSettled([
                 flightPromise,
                 hotelPromise,
             ]);
-            return this.buildResponse(partialResults, elapsedTime, true);
+            response = this.buildResponse(partialResults, elapsedTime, true);
         }
-        this.logger.log(`[Scatter-Gather] Completed in ${elapsedTime} ms`);
-        return this.buildResponse(results, elapsedTime, false);
+        else {
+            this.logger.log(`[Scatter-Gather] Completed in ${elapsedTime} ms`);
+            response = this.buildResponse(results, elapsedTime, false);
+        }
+        // Add weather response if requested for v2
+        if (includeWeather) {
+            this.logger.log(`[Scatter-Gather] Fetching weather for ${to} on ${date}`);
+            try {
+                const weather = await this.circuitBreakerService.execute(() => this.HttpClientsService.getWeather(to, date), () => ({
+                    destination: to,
+                    forecast: [],
+                    degraded: true,
+                    error: "Weather service temporarily unavailable",
+                }), "weather-service");
+                response.weather = weather;
+                // State as degraded if weather is failed
+                if (weather.degraded) {
+                    response.degraded = true;
+                    response.metadata.weatherError = weather.error;
+                    this.logger.warn(`[Scatter-Gather] Weather service degraded`);
+                }
+                else {
+                    this.logger.log(`[Scatter-Gather] Weather fetched successfully for ${weather.destination}`);
+                }
+            }
+            catch (error) {
+                const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+                this.logger.error(`[Scatter-Gather] Weather circuit breaker error: ${errorMessage}`);
+                response.weather = {
+                    destination: to,
+                    forecast: [],
+                    degraded: true,
+                    error: "Weather service unavailable",
+                };
+                response.degraded = true;
+                response.metadata.weatherError = errorMessage;
+            }
+        }
+        return response;
     }
     buildResponse(results, elapsedTime, isTimeout) {
         const response = {
@@ -104,6 +142,7 @@ let ScatterGatherService = ScatterGatherService_1 = class ScatterGatherService {
 exports.ScatterGatherService = ScatterGatherService;
 exports.ScatterGatherService = ScatterGatherService = ScatterGatherService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClient_service_1.HttpClientsService])
+    __metadata("design:paramtypes", [HttpClient_service_1.HttpClientsService,
+        circuit_breaker_service_1.CircuitBreakerService])
 ], ScatterGatherService);
 //# sourceMappingURL=scatter-gather.service.js.map
