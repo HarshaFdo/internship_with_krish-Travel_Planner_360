@@ -3,6 +3,7 @@ import { ScatterGatherService } from "../services/patterns/scatter-gather.servic
 import { ChainingService } from "../services/patterns/chaining.service";
 import { BranchingService } from "../services/patterns/branching.service";
 import { MetricsService } from "../services/metrics.service";
+import { TripSearchDto } from "../dto/trip-search.dto";
 
 @Controller("v1/trips")
 export class TripsV1Controller {
@@ -15,55 +16,22 @@ export class TripsV1Controller {
 
   // for scatter-gather pattern
   @Get("search")
-  async search(
-    @Query("from") from: string,
-    @Query("to") to: string,
-    @Query("date") date: string
-  ) {
+  async search(@Query() query: TripSearchDto) {
     this.metricsService.trackRequest("v1", "/v1/trips/search");
-
-    if (!from || !to || !date) {
-      throw new BadRequestException(
-        "Missing required query parameters: from, to, date"
-      );
-    }
-
-    return this.scatterGatherService.execute(from, to, date);
+    return this.scatterGatherService.execute(query.from, query.to, query.date);
   }
 
   // for chaining pattern
   @Get("cheapest-route")
-  async cheapestRoute(
-    @Query("from") from: string,
-    @Query("to") to: string,
-    @Query("date") date: string
-  ) {
+  async cheapestRoute(@Query() query: TripSearchDto) {
     this.metricsService.trackRequest("v1", "/v1/trips/cheapest-route");
-
-    if (!from || !to || !date) {
-      throw new BadRequestException(
-        "Missing required query parameters: from, to, date"
-      );
-    }
-
-    return this.chainingService.execute(from, to, date);
+    return this.chainingService.execute(query.from, query.to, query.date);
   }
 
   // for branching pattern
   @Get("contextual")
-  async contextual(
-    @Query("from") from: string,
-    @Query("to") to: string,
-    @Query("date") date: string
-  ) {
+  async contextual(@Query() query: TripSearchDto) {
     this.metricsService.trackRequest("v1", "/v1/trips/contextual");
-
-    if (!from || !to || !date) {
-      throw new BadRequestException(
-        "Missing required query parameters: from, to, date"
-      );
-    }
-
-    return this.branchingService.execute(from, to, date);
+    return this.branchingService.execute(query.from, query.to, query.date);
   }
 }

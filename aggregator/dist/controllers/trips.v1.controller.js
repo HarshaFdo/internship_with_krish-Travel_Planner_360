@@ -18,6 +18,7 @@ const scatter_gather_service_1 = require("../services/patterns/scatter-gather.se
 const chaining_service_1 = require("../services/patterns/chaining.service");
 const branching_service_1 = require("../services/patterns/branching.service");
 const metrics_service_1 = require("../services/metrics.service");
+const trip_search_dto_1 = require("../dto/trip-search.dto");
 let TripsV1Controller = class TripsV1Controller {
     constructor(scatterGatherService, chainingService, branchingService, metricsService) {
         this.scatterGatherService = scatterGatherService;
@@ -26,56 +27,41 @@ let TripsV1Controller = class TripsV1Controller {
         this.metricsService = metricsService;
     }
     // for scatter-gather pattern
-    async search(from, to, date) {
+    async search(query) {
         this.metricsService.trackRequest("v1", "/v1/trips/search");
-        if (!from || !to || !date) {
-            throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
-        }
-        return this.scatterGatherService.execute(from, to, date);
+        return this.scatterGatherService.execute(query.from, query.to, query.date);
     }
     // for chaining pattern
-    async cheapestRoute(from, to, date) {
+    async cheapestRoute(query) {
         this.metricsService.trackRequest("v1", "/v1/trips/cheapest-route");
-        if (!from || !to || !date) {
-            throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
-        }
-        return this.chainingService.execute(from, to, date);
+        return this.chainingService.execute(query.from, query.to, query.date);
     }
     // for branching pattern
-    async contextual(from, to, date) {
+    async contextual(query) {
         this.metricsService.trackRequest("v1", "/v1/trips/contextual");
-        if (!from || !to || !date) {
-            throw new common_1.BadRequestException("Missing required query parameters: from, to, date");
-        }
-        return this.branchingService.execute(from, to, date);
+        return this.branchingService.execute(query.from, query.to, query.date);
     }
 };
 exports.TripsV1Controller = TripsV1Controller;
 __decorate([
     (0, common_1.Get)("search"),
-    __param(0, (0, common_1.Query)("from")),
-    __param(1, (0, common_1.Query)("to")),
-    __param(2, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [trip_search_dto_1.TripSearchDto]),
     __metadata("design:returntype", Promise)
 ], TripsV1Controller.prototype, "search", null);
 __decorate([
     (0, common_1.Get)("cheapest-route"),
-    __param(0, (0, common_1.Query)("from")),
-    __param(1, (0, common_1.Query)("to")),
-    __param(2, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [trip_search_dto_1.TripSearchDto]),
     __metadata("design:returntype", Promise)
 ], TripsV1Controller.prototype, "cheapestRoute", null);
 __decorate([
     (0, common_1.Get)("contextual"),
-    __param(0, (0, common_1.Query)("from")),
-    __param(1, (0, common_1.Query)("to")),
-    __param(2, (0, common_1.Query)("date")),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [trip_search_dto_1.TripSearchDto]),
     __metadata("design:returntype", Promise)
 ], TripsV1Controller.prototype, "contextual", null);
 exports.TripsV1Controller = TripsV1Controller = __decorate([
