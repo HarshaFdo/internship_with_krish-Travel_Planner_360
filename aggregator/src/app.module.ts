@@ -9,6 +9,7 @@ import { TripsV2Controller } from "./controllers/trips.v2.controller";
 import { CircuitBreaker } from "./utils/circuit-breaker";
 import { CircuitBreakerController } from "./controllers/circuit-breaker.controller";
 import { AggregatorService } from "./services/aggregator.service";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AggregatorService } from "./services/aggregator.service";
       timeout: 6000,
       maxRedirects: 5,
     }),
+    ConfigModule.forRoot({isGlobal: true})
   ],
   controllers: [
     TripsV1Controller,

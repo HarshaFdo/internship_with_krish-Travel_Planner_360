@@ -18,6 +18,7 @@ const trips_v2_controller_1 = require("./controllers/trips.v2.controller");
 const circuit_breaker_1 = require("./utils/circuit-breaker");
 const circuit_breaker_controller_1 = require("./controllers/circuit-breaker.controller");
 const aggregator_service_1 = require("./services/aggregator.service");
+const config_1 = require("@nestjs/config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -28,6 +29,7 @@ exports.AppModule = AppModule = __decorate([
                 timeout: 6000,
                 maxRedirects: 5,
             }),
+            config_1.ConfigModule.forRoot({ isGlobal: true })
         ],
         controllers: [
             trips_v1_controller_1.TripsV1Controller,

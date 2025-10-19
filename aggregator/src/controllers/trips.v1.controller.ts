@@ -4,6 +4,7 @@ import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { TripSearchDto } from "../dto/trip-search.dto";
 import { AggregatorService } from "../services/aggregator.service";
+import { CircuitBreaker } from "../utils/circuit-breaker";
 
 @Controller("v1/trips")
 export class TripsV1Controller {
@@ -43,5 +44,15 @@ export class MetricsController {
   @Get()
   getMetrics() {
     return this.metrics.getMetrics();
+  }
+}
+
+@Controller("v2/circuit-breaker")
+export class CircuitBreakerController {
+  constructor(private readonly circuitBreaker: CircuitBreaker) {}
+
+  @Get()
+  getCircuitBreakerState() {
+    return this.circuitBreaker.getState();
   }
 }

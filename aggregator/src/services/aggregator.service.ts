@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ScatterGather } from "../utils/scatter-gather";
-import { Chaining } from '../utils/chaining';
+import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { CircuitBreaker } from "../utils/circuit-breaker";
 import { HttpClients } from "../utils/HttpClient";
@@ -25,7 +25,7 @@ export class AggregatorService {
     private readonly chaining: Chaining,
     private readonly branching: Branching,
     private readonly circuitBreaker: CircuitBreaker,
-    private readonly httpClients: HttpClients,
+    private readonly httpClients: HttpClients
   ) {}
 
   // Metrics methods
@@ -64,8 +64,10 @@ export class AggregatorService {
   }
 
   // weather service with circuit breaker
-    async fetchWeatherWithCircuitBreaker(destination: string, date: string) {
-    this.logger.log(`[AggregatorService] Fetching weather for ${destination} on ${date}`);
+  async fetchWeatherWithCircuitBreaker(destination: string, date: string) {
+    this.logger.log(
+      `[AggregatorService] Fetching weather for ${destination} on ${date}`
+    );
 
     try {
       const weather = await this.circuitBreaker.execute(
@@ -94,7 +96,7 @@ export class AggregatorService {
       this.logger.error(
         `[AggregatorService] Weather circuit breaker error: ${errorMessage}`
       );
-      
+
       return {
         destination,
         forecast: [],
@@ -105,28 +107,32 @@ export class AggregatorService {
   }
 
   // TODO: Add aggregator pattern methods here later
-async executeScatterGather(from: string, to: string, date: string, includeWeather: boolean = false) {
-  const respone = await this.scatterGather.execute(from, to, date);
+  async executeScatterGather(
+    from: string,
+    to: string,
+    date: string,
+    includeWeather: boolean = false
+  ) {
+    const respone = await this.scatterGather.execute(from, to, date);
 
-  if (includeWeather) {
-    const weather = await this.fetchWeatherWithCircuitBreaker(to, date);
-    respone.weather = weather;
+    if (includeWeather) {
+      const weather = await this.fetchWeatherWithCircuitBreaker(to, date);
+      respone.weather = weather;
 
-    if (weather.degraded) {
-      respone.degraded = true;
-      respone.metadata.weatherError = weather.error;
+      if (weather.degraded) {
+        respone.degraded = true;
+        respone.metadata.weatherError = weather.error;
+      }
     }
+
+    return respone;
   }
 
-  return respone;
-}
+  async executeChaining(from: string, to: string, date: string) {
+    return this.chaining.execute(from, to, date);
+  }
 
-async executeChaining(from: string, to: string, date: string) {
-  return this.chaining.execute(from, to, date);
-}
-
-async executeBranching(from: string, to: string, date: string) {
-  return this.branching.execute(from, to, date);
-}
-
+  async executeBranching(from: string, to: string, date: string) {
+    return this.branching.execute(from, to, date);
+  }
 }

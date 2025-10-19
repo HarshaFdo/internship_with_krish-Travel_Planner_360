@@ -12,13 +12,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetricsController = exports.TripsV1Controller = void 0;
+exports.CircuitBreakerController = exports.MetricsController = exports.TripsV1Controller = void 0;
 const common_1 = require("@nestjs/common");
 const scatter_gather_1 = require("../utils/scatter-gather");
 const chaining_1 = require("../utils/chaining");
 const branching_1 = require("../utils/branching");
 const trip_search_dto_1 = require("../dto/trip-search.dto");
 const aggregator_service_1 = require("../services/aggregator.service");
+const circuit_breaker_1 = require("../utils/circuit-breaker");
 let TripsV1Controller = class TripsV1Controller {
     constructor(scatterGather, chaining, branching, metrics) {
         this.scatterGather = scatterGather;
@@ -90,4 +91,23 @@ exports.MetricsController = MetricsController = __decorate([
     (0, common_1.Controller)("metrics"),
     __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
 ], MetricsController);
+let CircuitBreakerController = class CircuitBreakerController {
+    constructor(circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
+    }
+    getCircuitBreakerState() {
+        return this.circuitBreaker.getState();
+    }
+};
+exports.CircuitBreakerController = CircuitBreakerController;
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], CircuitBreakerController.prototype, "getCircuitBreakerState", null);
+exports.CircuitBreakerController = CircuitBreakerController = __decorate([
+    (0, common_1.Controller)("v2/circuit-breaker"),
+    __metadata("design:paramtypes", [circuit_breaker_1.CircuitBreaker])
+], CircuitBreakerController);
 //# sourceMappingURL=trips.v1.controller.js.map
