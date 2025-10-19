@@ -8,17 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const HttpClient_service_1 = require("./services/HttpClient.service");
+const HttpClient_1 = require("./utils/HttpClient");
 const axios_1 = require("@nestjs/axios");
 const trips_v1_controller_1 = require("./controllers/trips.v1.controller");
-const scatter_gather_service_1 = require("./services/patterns/scatter-gather.service");
-const chaining_service_1 = require("./services/patterns/chaining.service");
-const branching_service_1 = require("./services/patterns/branching.service");
+const scatter_gather_1 = require("./utils/scatter-gather");
+const chaining_1 = require("./utils/chaining");
+const branching_1 = require("./utils/branching");
 const trips_v2_controller_1 = require("./controllers/trips.v2.controller");
-const metrics_service_1 = require("./services/metrics.service");
-const metrics_controller_1 = require("./controllers/metrics.controller");
-const circuit_breaker_service_1 = require("./services/circuit-breaker.service");
+const circuit_breaker_1 = require("./utils/circuit-breaker");
 const circuit_breaker_controller_1 = require("./controllers/circuit-breaker.controller");
+const aggregator_service_1 = require("./services/aggregator.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -30,14 +29,19 @@ exports.AppModule = AppModule = __decorate([
                 maxRedirects: 5,
             }),
         ],
-        controllers: [trips_v1_controller_1.TripsV1Controller, trips_v2_controller_1.TripsV2Controller, metrics_controller_1.MetricsController, circuit_breaker_controller_1.CircuitBreakerController],
+        controllers: [
+            trips_v1_controller_1.TripsV1Controller,
+            trips_v2_controller_1.TripsV2Controller,
+            trips_v1_controller_1.MetricsController,
+            circuit_breaker_controller_1.CircuitBreakerController,
+        ],
         providers: [
-            HttpClient_service_1.HttpClientsService,
-            metrics_service_1.MetricsService,
-            scatter_gather_service_1.ScatterGatherService,
-            chaining_service_1.ChainingService,
-            branching_service_1.BranchingService,
-            circuit_breaker_service_1.CircuitBreakerService
+            HttpClient_1.HttpClients,
+            aggregator_service_1.AggregatorService,
+            scatter_gather_1.ScatterGather,
+            chaining_1.Chaining,
+            branching_1.Branching,
+            circuit_breaker_1.CircuitBreaker,
         ],
     })
 ], AppModule);

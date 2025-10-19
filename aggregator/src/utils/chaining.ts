@@ -5,13 +5,13 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
-import { HttpClientsService } from "../HttpClient.service";
+import { HttpClients } from "./HttpClient";
 
 @Injectable()
-export class ChainingService {
-  private readonly logger = new Logger(ChainingService.name);
+export class Chaining {
+  private readonly logger = new Logger(Chaining.name);
 
-  constructor(private readonly httpClientsService: HttpClientsService) {}
+  constructor(private readonly httpClients: HttpClients) {}
 
   async execute(from: string, to: string, date: string) {
     const startTime = Date.now();
@@ -24,7 +24,7 @@ export class ChainingService {
     try {
       // step 1: getting the cheapest flight
       this.logger.log("[Chaining] 1. Fetching the cheapest fright...");
-      const flightResponse = await this.httpClientsService.getCheapestFlight(
+      const flightResponse = await this.httpClients.getCheapestFlight(
         from,
         to,
         date
@@ -51,7 +51,7 @@ export class ChainingService {
       this.logger.log(
         `[Chaining] 2. Fetching the cheapest hotel (lateArrival: ${isLateArrival}) ...`
       );
-      const hotelResponse = await this.httpClientsService.getCheapestHotel(
+      const hotelResponse = await this.httpClients.getCheapestHotel(
         to,
         isLateArrival
       );

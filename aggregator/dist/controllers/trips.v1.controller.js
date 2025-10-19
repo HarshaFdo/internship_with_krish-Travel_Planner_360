@@ -12,34 +12,34 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TripsV1Controller = void 0;
+exports.MetricsController = exports.TripsV1Controller = void 0;
 const common_1 = require("@nestjs/common");
-const scatter_gather_service_1 = require("../services/patterns/scatter-gather.service");
-const chaining_service_1 = require("../services/patterns/chaining.service");
-const branching_service_1 = require("../services/patterns/branching.service");
-const metrics_service_1 = require("../services/metrics.service");
+const scatter_gather_1 = require("../utils/scatter-gather");
+const chaining_1 = require("../utils/chaining");
+const branching_1 = require("../utils/branching");
 const trip_search_dto_1 = require("../dto/trip-search.dto");
+const aggregator_service_1 = require("../services/aggregator.service");
 let TripsV1Controller = class TripsV1Controller {
-    constructor(scatterGatherService, chainingService, branchingService, metricsService) {
-        this.scatterGatherService = scatterGatherService;
-        this.chainingService = chainingService;
-        this.branchingService = branchingService;
-        this.metricsService = metricsService;
+    constructor(scatterGather, chaining, branching, metrics) {
+        this.scatterGather = scatterGather;
+        this.chaining = chaining;
+        this.branching = branching;
+        this.metrics = metrics;
     }
     // for scatter-gather pattern
     async search(query) {
-        this.metricsService.trackRequest("v1", "/v1/trips/search");
-        return this.scatterGatherService.execute(query.from, query.to, query.date);
+        this.metrics.trackRequest("v1", "/v1/trips/search");
+        return this.scatterGather.execute(query.from, query.to, query.date);
     }
     // for chaining pattern
     async cheapestRoute(query) {
-        this.metricsService.trackRequest("v1", "/v1/trips/cheapest-route");
-        return this.chainingService.execute(query.from, query.to, query.date);
+        this.metrics.trackRequest("v1", "/v1/trips/cheapest-route");
+        return this.chaining.execute(query.from, query.to, query.date);
     }
     // for branching pattern
     async contextual(query) {
-        this.metricsService.trackRequest("v1", "/v1/trips/contextual");
-        return this.branchingService.execute(query.from, query.to, query.date);
+        this.metrics.trackRequest("v1", "/v1/trips/contextual");
+        return this.branching.execute(query.from, query.to, query.date);
     }
 };
 exports.TripsV1Controller = TripsV1Controller;
@@ -66,9 +66,28 @@ __decorate([
 ], TripsV1Controller.prototype, "contextual", null);
 exports.TripsV1Controller = TripsV1Controller = __decorate([
     (0, common_1.Controller)("v1/trips"),
-    __metadata("design:paramtypes", [scatter_gather_service_1.ScatterGatherService,
-        chaining_service_1.ChainingService,
-        branching_service_1.BranchingService,
-        metrics_service_1.MetricsService])
+    __metadata("design:paramtypes", [scatter_gather_1.ScatterGather,
+        chaining_1.Chaining,
+        branching_1.Branching,
+        aggregator_service_1.AggregatorService])
 ], TripsV1Controller);
+let MetricsController = class MetricsController {
+    constructor(metrics) {
+        this.metrics = metrics;
+    }
+    getMetrics() {
+        return this.metrics.getMetrics();
+    }
+};
+exports.MetricsController = MetricsController;
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], MetricsController.prototype, "getMetrics", null);
+exports.MetricsController = MetricsController = __decorate([
+    (0, common_1.Controller)("metrics"),
+    __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
+], MetricsController);
 //# sourceMappingURL=trips.v1.controller.js.map

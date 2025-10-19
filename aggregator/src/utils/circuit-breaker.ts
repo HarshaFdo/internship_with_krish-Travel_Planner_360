@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 
 @Injectable()
-export class CircuitBreakerService {
-  private readonly logger = new Logger(CircuitBreakerService.name);
+export class CircuitBreaker {
+  private readonly logger = new Logger(CircuitBreaker.name);
 
   private state: "CLOSED" | "OPEN" | "HALF_OPEN" = "CLOSED";
   private requests: boolean[] = []; // Tracking last 20 requests (true=success, false=failure)

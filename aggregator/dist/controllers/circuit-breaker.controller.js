@@ -11,13 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CircuitBreakerController = void 0;
 const common_1 = require("@nestjs/common");
-const circuit_breaker_service_1 = require("../services/circuit-breaker.service");
+const circuit_breaker_1 = require("../utils/circuit-breaker");
 let CircuitBreakerController = class CircuitBreakerController {
-    constructor(circuitBreakerService) {
-        this.circuitBreakerService = circuitBreakerService;
+    constructor(circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
     }
     getCircuitBreakerState() {
-        return this.circuitBreakerService.getState();
+        return this.circuitBreaker.getState();
     }
 };
 exports.CircuitBreakerController = CircuitBreakerController;
@@ -29,6 +29,6 @@ __decorate([
 ], CircuitBreakerController.prototype, "getCircuitBreakerState", null);
 exports.CircuitBreakerController = CircuitBreakerController = __decorate([
     (0, common_1.Controller)('v2/circuit-breaker'),
-    __metadata("design:paramtypes", [circuit_breaker_service_1.CircuitBreakerService])
+    __metadata("design:paramtypes", [circuit_breaker_1.CircuitBreaker])
 ], CircuitBreakerController);
 //# sourceMappingURL=circuit-breaker.controller.js.map

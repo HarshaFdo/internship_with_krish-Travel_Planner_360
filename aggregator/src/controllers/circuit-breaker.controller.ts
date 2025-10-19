@@ -1,14 +1,14 @@
 import { Controller, Get } from "@nestjs/common";
-import { CircuitBreakerService } from "../services/circuit-breaker.service";
+import { CircuitBreaker } from "../utils/circuit-breaker";
  
 
 @Controller('v2/circuit-breaker')
 export class CircuitBreakerController {
 
-  constructor(private readonly circuitBreakerService: CircuitBreakerService) {}
+  constructor(private readonly circuitBreaker: CircuitBreaker) {}
 
   @Get()
   getCircuitBreakerState() {
-    return this.circuitBreakerService.getState();
+    return this.circuitBreaker.getState();
   }
 }

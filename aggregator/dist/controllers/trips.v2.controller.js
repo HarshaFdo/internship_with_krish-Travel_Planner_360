@@ -15,25 +15,21 @@ var TripsV2Controller_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TripsV2Controller = void 0;
 const common_1 = require("@nestjs/common");
-const scatter_gather_service_1 = require("../services/patterns/scatter-gather.service");
-const HttpClient_service_1 = require("../services/HttpClient.service");
-const metrics_service_1 = require("../services/metrics.service");
-const circuit_breaker_service_1 = require("../services/circuit-breaker.service");
+const scatter_gather_1 = require("../utils/scatter-gather");
 const trip_search_dto_1 = require("../dto/trip-search.dto");
+const aggregator_service_1 = require("../services/aggregator.service");
 let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
-    constructor(scatterGatherService, httpClientsService, metricsService, circuitBreakerService) {
-        this.scatterGatherService = scatterGatherService;
-        this.httpClientsService = httpClientsService;
-        this.metricsService = metricsService;
-        this.circuitBreakerService = circuitBreakerService;
+    constructor(scatterGather, aggreagtorService) {
+        this.scatterGather = scatterGather;
+        this.aggreagtorService = aggreagtorService;
         this.logger = new common_1.Logger(TripsV2Controller_1.name);
     }
     // for scatter-gather pattern
     async search(query) {
-        this.metricsService.trackRequest("v2", "/v2/trips/search");
+        this.aggreagtorService.trackRequest("v2", "/v2/trips/search");
         this.logger.log(`[V2] /search called with from=${query.from}, to=${query.to}, date=${query.date}`);
         // pass true value to sinclude weather for v2 
-        const response = await this.scatterGatherService.execute(query.from, query.to, query.date, true // enable weather for v2
+        const response = await this.aggreagtorService.executeScatterGather(query.from, query.to, query.date, true // enable weather for v2
         );
         return {
             ...response,
@@ -51,9 +47,7 @@ __decorate([
 ], TripsV2Controller.prototype, "search", null);
 exports.TripsV2Controller = TripsV2Controller = TripsV2Controller_1 = __decorate([
     (0, common_1.Controller)("v2/trips"),
-    __metadata("design:paramtypes", [scatter_gather_service_1.ScatterGatherService,
-        HttpClient_service_1.HttpClientsService,
-        metrics_service_1.MetricsService,
-        circuit_breaker_service_1.CircuitBreakerService])
+    __metadata("design:paramtypes", [scatter_gather_1.ScatterGather,
+        aggregator_service_1.AggregatorService])
 ], TripsV2Controller);
 //# sourceMappingURL=trips.v2.controller.js.map

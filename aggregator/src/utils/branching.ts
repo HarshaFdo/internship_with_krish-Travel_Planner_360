@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { HttpClientsService } from "../HttpClient.service";
-import { isCoastalDestination } from "../../utils/location-utils";
+import { isCoastalDestination } from "./location-utils";
+import { HttpClients } from "./HttpClient";
 
 @Injectable()
-export class BranchingService {
-  private readonly logger = new Logger(BranchingService.name);
+export class Branching {
+  private readonly logger = new Logger(Branching.name);
 
-  constructor(private readonly httpClientsService: HttpClientsService) {}
+  constructor(private readonly httpClients: HttpClients) {}
 
   async execute(from: string, to: string, date: string) {
     const startTime = Date.now();
@@ -18,16 +18,14 @@ export class BranchingService {
       `[Branching] Starting orchestration for ${from} -> ${to} on ${date}`
     );
 
-    const elapsedTime = Date.now() - startTime;
-
     try {
       // always we have to fetch flight and hotels in parallel(scatter-gather)
       this.logger.log(`[Branching] Fetching flights and hotels in parallel...`);
 
       // Scatter-Gather
       const [flightResponse, hotelResponse] = await Promise.allSettled([
-        this.httpClientsService.getFlights(from, to, date),
-        this.httpClientsService.getHotels(to, date),
+        this.httpClients.getFlights(from, to, date),
+        this.httpClients.getHotels(to, date),
       ]);
 
       const response: any = {
@@ -47,7 +45,7 @@ export class BranchingService {
           `[Branching] Destination is Coastal - fetching events for ${to}...`
         );
 
-        const eventResponse = await this.httpClientsService.getEvents(to, date);
+        const eventResponse = await this.httpClients.getEvents(to, date);
         response.events = eventResponse.events || [];
 
         this.logger.log(
@@ -58,6 +56,8 @@ export class BranchingService {
           `[Branching] Destination is Inland - skiping the events service`
         );
       }
+
+      const elapsedTime = Date.now() - startTime;
 
       response.metadata = {
         pattern: "Branching",
@@ -80,6 +80,7 @@ export class BranchingService {
 
       return response;
     } catch (error) {
+      const elapsedTime = Date.now() - startTime;
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
 

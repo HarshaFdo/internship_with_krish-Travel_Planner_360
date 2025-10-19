@@ -1,37 +1,47 @@
 import { BadRequestException, Controller, Get, Query } from "@nestjs/common";
-import { ScatterGatherService } from "../services/patterns/scatter-gather.service";
-import { ChainingService } from "../services/patterns/chaining.service";
-import { BranchingService } from "../services/patterns/branching.service";
-import { MetricsService } from "../services/metrics.service";
+import { ScatterGather } from "../utils/scatter-gather";
+import { Chaining } from "../utils/chaining";
+import { Branching } from "../utils/branching";
 import { TripSearchDto } from "../dto/trip-search.dto";
+import { AggregatorService } from "../services/aggregator.service";
 
 @Controller("v1/trips")
 export class TripsV1Controller {
   constructor(
-    private readonly scatterGatherService: ScatterGatherService,
-    private readonly chainingService: ChainingService,
-    private readonly branchingService: BranchingService,
-    private readonly metricsService: MetricsService
+    private readonly scatterGather: ScatterGather,
+    private readonly chaining: Chaining,
+    private readonly branching: Branching,
+    private readonly metrics: AggregatorService
   ) {}
 
   // for scatter-gather pattern
   @Get("search")
   async search(@Query() query: TripSearchDto) {
-    this.metricsService.trackRequest("v1", "/v1/trips/search");
-    return this.scatterGatherService.execute(query.from, query.to, query.date);
+    this.metrics.trackRequest("v1", "/v1/trips/search");
+    return this.scatterGather.execute(query.from, query.to, query.date);
   }
 
   // for chaining pattern
   @Get("cheapest-route")
   async cheapestRoute(@Query() query: TripSearchDto) {
-    this.metricsService.trackRequest("v1", "/v1/trips/cheapest-route");
-    return this.chainingService.execute(query.from, query.to, query.date);
+    this.metrics.trackRequest("v1", "/v1/trips/cheapest-route");
+    return this.chaining.execute(query.from, query.to, query.date);
   }
 
   // for branching pattern
   @Get("contextual")
   async contextual(@Query() query: TripSearchDto) {
-    this.metricsService.trackRequest("v1", "/v1/trips/contextual");
-    return this.branchingService.execute(query.from, query.to, query.date);
+    this.metrics.trackRequest("v1", "/v1/trips/contextual");
+    return this.branching.execute(query.from, query.to, query.date);
+  }
+}
+
+@Controller("metrics")
+export class MetricsController {
+  constructor(private readonly metrics: AggregatorService) {}
+
+  @Get()
+  getMetrics() {
+    return this.metrics.getMetrics();
   }
 }

@@ -1,3 +1,5 @@
+import { DestinationType } from "../types";
+
 const COASTAL_DESTINATIONS = [
   "MLE", // Maldives
   "GOA", // Goa, India
@@ -21,16 +23,16 @@ export function isInlandDestination(destination: string): boolean {
 }
 
 export function getDestinationType(
-  destination: string
-): "coastal" | "inland" | "unknown" {
+  destination: DestinationType
+) : DestinationType | "unknown" {
   const upper = destination.toUpperCase();
 
   if (COASTAL_DESTINATIONS.includes(upper)) {
-    return "coastal";
+    return DestinationType.COASTAL;
   }
 
   if (INLAND_DESTINATIONS.includes(upper)) {
-    return "inland";
+    return DestinationType.INLAND;
   }
 
   return "unknown";

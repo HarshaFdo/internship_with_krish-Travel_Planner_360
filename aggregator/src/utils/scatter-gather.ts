@@ -1,29 +1,24 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { HttpClientsService } from "../HttpClient.service";
-import { CircuitBreakerService } from "../circuit-breaker.service";
+import { HttpClients } from "./HttpClient";
+import { CircuitBreaker } from "./circuit-breaker";
 
 @Injectable()
-export class ScatterGatherService {
-  private readonly logger = new Logger(ScatterGatherService.name);
+export class ScatterGather {
+  private readonly logger = new Logger(ScatterGather.name);
   private readonly TIMEOUT_MS = 1000;
 
   constructor(
-    private readonly HttpClientsService: HttpClientsService,
-    private readonly circuitBreakerService: CircuitBreakerService
+    private readonly HttpClients: HttpClients,
+    private readonly circuitBreaker: CircuitBreaker
   ) {}
 
-  async execute(
-    from: string,
-    to: string,
-    date: string,
-    includeWeather: boolean = false
-  ) {
+  async execute(from: string, to: string, date: string) {
     const startTime = Date.now();
     this.logger.log(
-      `[Scatter-Gather] Starting parallel calls for ${from} -> ${to} on ${date} (includeWeather: ${includeWeather})`
+      `[Scatter-Gather] Starting parallel calls for ${from} -> ${to} on ${date})`
     );
 
-    const flightPromise = this.HttpClientsService.getFlights(from, to, date)
+    const flightPromise = this.HttpClients.getFlights(from, to, date)
       .then((data) => ({ data, service: "flight", success: true }))
       .catch((error) => ({
         data: null,
@@ -32,7 +27,7 @@ export class ScatterGatherService {
         error: error.message,
       }));
 
-    const hotelPromise = this.HttpClientsService.getHotels(to, date)
+    const hotelPromise = this.HttpClients.getHotels(to, date)
       .then((data) => ({ data, service: "hotel", success: true }))
       .catch((error) => ({
         data: null,
@@ -66,58 +61,11 @@ export class ScatterGatherService {
         hotelPromise,
       ]);
 
-      response = this.buildResponse(partialResults, elapsedTime, true);
+      return this.buildResponse(partialResults, elapsedTime, true);
     } else {
       this.logger.log(`[Scatter-Gather] Completed in ${elapsedTime} ms`);
-      response = this.buildResponse(results as any, elapsedTime, false);
+      return this.buildResponse(results as any, elapsedTime, false);
     }
-
-    // Add weather response if requested for v2
-    if (includeWeather) {
-      this.logger.log(`[Scatter-Gather] Fetching weather for ${to} on ${date}`);
-
-      try {
-        const weather = await this.circuitBreakerService.execute(
-          () => this.HttpClientsService.getWeather(to, date),
-          () => ({
-            destination: to,
-            forecast: [],
-            degraded: true,
-            error: "Weather service temporarily unavailable",
-          }),
-          "weather-service"
-        );
-
-        response.weather = weather;
-
-        // State as degraded if weather is failed
-        if (weather.degraded) {
-          response.degraded = true;
-          response.metadata.weatherError = weather.error;
-          this.logger.warn(`[Scatter-Gather] Weather service degraded`);
-        } else {
-          this.logger.log(
-            `[Scatter-Gather] Weather fetched successfully for ${weather.destination}`
-          );
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error occurred";
-        this.logger.error(
-          `[Scatter-Gather] Weather circuit breaker error: ${errorMessage}`
-        );
-        response.weather = {
-          destination: to,
-          forecast: [],
-          degraded: true,
-          error: "Weather service unavailable",
-        };
-        response.degraded = true;
-        response.metadata.weatherError = errorMessage;
-      }
-    }
-
-    return response;
   }
 
   private buildResponse(

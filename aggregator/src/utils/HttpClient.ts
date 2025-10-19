@@ -7,9 +7,10 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
 
 @Injectable()
-export class HttpClientsService {
-  private readonly logger = new Logger(HttpClientsService.name);
+export class HttpClients {
+  private readonly logger = new Logger(HttpClients.name);
 
+  // take this from .env
   private readonly SERVICE_URL = {
     flights: "http://localhost:3001",
     hotels: "http://localhost:3002",
@@ -18,10 +19,13 @@ export class HttpClientsService {
   } as const;
 
   constructor(private readonly httpService: HttpService) {}
-
+// only call method
   async fetchFromService(
+    // no service only endpoint
     service: keyof typeof this.SERVICE_URL,
     endpoint: string,
+    // body: any,
+    // queries?: Record<string,any>,
     params?: Record<string, any>
   ): Promise<any> {
     const url = `${this.SERVICE_URL[service]}${endpoint}`;
@@ -30,7 +34,7 @@ export class HttpClientsService {
     const cleanParams = params
       ? Object.fromEntries(
           Object.entries(params).filter(([_, v]) => v !== undefined)
-        )
+        ) 
       : undefined;
 
     try {
@@ -48,6 +52,8 @@ export class HttpClientsService {
       );
     }
   }
+
+
 
   async getFlights(from?: string, to?: string, date?: string) {
     return this.fetchFromService("flights", "/flights", { from, to, date });
@@ -79,7 +85,7 @@ export class HttpClientsService {
     return this.fetchFromService("weather", "/weather", { destination, date });
   }
 
-  async getEvents(destination: string, date?: string) {
-    return this.fetchFromService("events", "/events", { destination, date });
+  async getEvents(destination: string, date?: string, category: string = "beach") {
+    return this.fetchFromService("events", "/events", { destination, date, category });
   }
 }

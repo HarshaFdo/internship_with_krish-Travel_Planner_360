@@ -8,18 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetricsController = void 0;
 const common_1 = require("@nestjs/common");
-const metrics_service_1 = require("../services/metrics.service");
-const circuit_breaker_service_1 = require("../services/circuit-breaker.service");
+const metrics_1 = require("../utils/metrics");
 let MetricsController = class MetricsController {
-    constructor(metricsService, circuitBreakerService) {
-        this.metricsService = metricsService;
-        this.circuitBreakerService = circuitBreakerService;
+    constructor(metrics) {
+        this.metrics = metrics;
     }
     getMetrics() {
-        return this.metricsService.getMetrics();
+        return this.metrics.getMetrics();
     }
 };
 exports.MetricsController = MetricsController;
@@ -31,7 +30,6 @@ __decorate([
 ], MetricsController.prototype, "getMetrics", null);
 exports.MetricsController = MetricsController = __decorate([
     (0, common_1.Controller)("metrics"),
-    __metadata("design:paramtypes", [metrics_service_1.MetricsService,
-        circuit_breaker_service_1.CircuitBreakerService])
+    __metadata("design:paramtypes", [typeof (_a = typeof metrics_1.Metrics !== "undefined" && metrics_1.Metrics) === "function" ? _a : Object])
 ], MetricsController);
 //# sourceMappingURL=metrics.controller.js.map

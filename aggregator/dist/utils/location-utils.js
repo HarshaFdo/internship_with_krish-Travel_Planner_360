@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isCoastalDestination = isCoastalDestination;
 exports.isInlandDestination = isInlandDestination;
 exports.getDestinationType = getDestinationType;
+const types_1 = require("../types");
 const COASTAL_DESTINATIONS = [
     "MLE", // Maldives
     "GOA", // Goa, India
@@ -24,10 +25,10 @@ function isInlandDestination(destination) {
 function getDestinationType(destination) {
     const upper = destination.toUpperCase();
     if (COASTAL_DESTINATIONS.includes(upper)) {
-        return "coastal";
+        return types_1.DestinationType.COASTAL;
     }
     if (INLAND_DESTINATIONS.includes(upper)) {
-        return "inland";
+        return types_1.DestinationType.INLAND;
     }
     return "unknown";
 }

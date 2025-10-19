@@ -1,15 +1,14 @@
 import { Module } from "@nestjs/common";
-import { HttpClientsService } from "./services/HttpClient.service";
+import { HttpClients } from "./utils/HttpClient";
 import { HttpModule } from "@nestjs/axios";
-import { TripsV1Controller } from "./controllers/trips.v1.controller";
-import { ScatterGatherService } from "./services/patterns/scatter-gather.service";
-import { ChainingService } from "./services/patterns/chaining.service";
-import { BranchingService } from "./services/patterns/branching.service";
+import { MetricsController, TripsV1Controller } from "./controllers/trips.v1.controller";
+import { ScatterGather } from "./utils/scatter-gather";
+import { Chaining } from "./utils/chaining";
+import { Branching } from "./utils/branching";
 import { TripsV2Controller } from "./controllers/trips.v2.controller";
-import { MetricsService } from "./services/metrics.service";
-import { MetricsController } from "./controllers/metrics.controller";
-import { CircuitBreakerService } from "./services/circuit-breaker.service";
+import { CircuitBreaker } from "./utils/circuit-breaker";
 import { CircuitBreakerController } from "./controllers/circuit-breaker.controller";
+import { AggregatorService } from "./services/aggregator.service";
 
 @Module({
   imports: [
@@ -18,14 +17,19 @@ import { CircuitBreakerController } from "./controllers/circuit-breaker.controll
       maxRedirects: 5,
     }),
   ],
-  controllers: [TripsV1Controller, TripsV2Controller, MetricsController, CircuitBreakerController],
+  controllers: [
+    TripsV1Controller,
+    TripsV2Controller,
+    MetricsController,
+    CircuitBreakerController,
+  ],
   providers: [
-    HttpClientsService,
-    MetricsService,
-    ScatterGatherService,
-    ChainingService,
-    BranchingService,
-    CircuitBreakerService
+    HttpClients,
+    AggregatorService,
+    ScatterGather,
+    Chaining,
+    Branching,
+    CircuitBreaker,
   ],
 })
 export class AppModule {}
