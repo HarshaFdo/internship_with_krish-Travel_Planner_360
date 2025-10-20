@@ -25,16 +25,32 @@ let HttpClient = HttpClient_1 = class HttpClient {
         this.httpService = httpService;
         this.logger = new common_1.Logger(HttpClient_1.name);
     }
-    async call(endpoint, body, queries) {
+    async call(method, endpoint, body, queries) {
         // Filter the undefined values to avoid sending them as query parameters.
         const cleanQuery = queries
             ? Object.fromEntries(Object.entries(queries).filter(([_, v]) => v !== undefined))
             : undefined;
         try {
-            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(endpoint, {
-                params: cleanQuery,
-                data: body,
-            }));
+            let response;
+            if (["POST", "PUT", "PATCH"].includes(method)) {
+                response = await (0, rxjs_1.firstValueFrom)(this.httpService.request({
+                    method,
+                    url: endpoint,
+                    data: body,
+                    params: cleanQuery,
+                }));
+            }
+            else if (["GET", "DELETE"].includes(method)) {
+                response = await (0, rxjs_1.firstValueFrom)(this.httpService.request({
+                    method,
+                    url: endpoint,
+                    data: body,
+                    params: cleanQuery,
+                }));
+            }
+            else {
+                throw new common_1.BadRequestException(`Unsupported HTTP method: ${method}`);
+            }
             return response.data;
         }
         catch (error) {

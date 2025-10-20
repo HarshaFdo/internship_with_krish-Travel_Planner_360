@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import { HttpMethod } from "../types";
 
 export const SERVICE_URL = {
   flights: process.env.FLIGHTS_SERVICE_URL,
@@ -21,24 +23,43 @@ export class HttpClient {
 
   constructor(private readonly httpService: HttpService) {}
   async call(
+    method: HttpMethod,
     endpoint: string,
     body?: any,
-    queries?: Record<string, any>,
+    queries?: Record<string, any>
   ): Promise<any> {
     // Filter the undefined values to avoid sending them as query parameters.
-  const cleanQuery = queries
+    const cleanQuery = queries
       ? Object.fromEntries(
           Object.entries(queries).filter(([_, v]) => v !== undefined)
         )
       : undefined;
 
     try {
-      const response = await firstValueFrom(
-        this.httpService.get(endpoint, {
-          params: cleanQuery,
-          data: body,
-        })
-      );
+      let response;
+
+      if (["POST", "PUT", "PATCH"].includes(method)) {
+        response = await firstValueFrom(
+          this.httpService.request({
+            method,
+            url: endpoint,
+            data: body,
+            params: cleanQuery,
+          })
+        );
+      } else if (["GET", "DELETE"].includes(method)) {
+        response = await firstValueFrom(
+          this.httpService.request({
+            method,
+            url: endpoint,
+            data: body,
+            params: cleanQuery,
+          })
+        );
+      } else {
+        throw new BadRequestException(`Unsupported HTTP method: ${method}`);
+      }
+      
       return response.data;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

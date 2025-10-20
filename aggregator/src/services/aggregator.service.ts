@@ -4,8 +4,6 @@ import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { CircuitBreaker } from "../utils/circuit-breaker";
 import { HttpClient, SERVICE_URL } from "../utils/HttpClient";
-import { Metrics } from "../utils/metrics";
-import { ApiVersion } from "../types";
 
 @Injectable()
 export class AggregatorService {
@@ -17,8 +15,7 @@ export class AggregatorService {
     private readonly chaining: Chaining,
     private readonly branching: Branching,
     private readonly circuitBreaker: CircuitBreaker,
-    private readonly httpClient: HttpClient,
-    private readonly metrics: Metrics
+    private readonly httpClient: HttpClient
   ) {}
 
   // weather service with circuit breaker
@@ -30,7 +27,7 @@ export class AggregatorService {
     try {
       const weather = await this.circuitBreaker.execute(
         () =>
-          this.httpClient.call(`${SERVICE_URL.weather}/weather`, {
+          this.httpClient.call("GET", `${SERVICE_URL.weather}/weather`, null, {
             destination,
             date,
           }),
@@ -73,9 +70,8 @@ export class AggregatorService {
     from: string,
     to: string,
     date: string,
-    includeWeather: boolean = false,
+    includeWeather: boolean = false
   ) {
-
     const response = await this.scatterGather.execute(from, to, date);
 
     if (includeWeather) {
@@ -91,26 +87,18 @@ export class AggregatorService {
     return response;
   }
 
-  async executeChaining(
-    from: string,
-    to: string,
-    date: string,
-  ) {
+  async executeChaining(from: string, to: string, date: string) {
     return this.chaining.execute(from, to, date);
   }
 
-  async executeBranching(
-    from: string,
-    to: string,
-    date: string,
-  ) {
+  async executeBranching(from: string, to: string, date: string) {
     return this.branching.execute(from, to, date);
   }
 
   // Microservices Client methods
   // Flights
   async getFlights(from?: string, to?: string, date?: string) {
-    return this.httpClient.call(`${SERVICE_URL.flights}/flights`, {
+    return this.httpClient.call("GET", `${SERVICE_URL.flights}/flights`, null, {
       from,
       to,
       date,
@@ -118,31 +106,41 @@ export class AggregatorService {
   }
 
   async getCheapestFlight(from: string, to: string, date?: string) {
-    return this.httpClient.call(`${SERVICE_URL.flights}/flights/cheapest`, {
-      from,
-      to,
-      date,
-    });
+    return this.httpClient.call(
+      "GET",
+      `${SERVICE_URL.flights}/flights/cheapest`,
+      null,
+      {
+        from,
+        to,
+        date,
+      }
+    );
   }
 
   // Hotels
   async getHotels(destination: string, date: string, lateCheckIn?: string) {
-    return this.httpClient.call(`${SERVICE_URL.hotels}/hotels`, {
+    return this.httpClient.call("GET", `${SERVICE_URL.hotels}/hotels`, null, {
       destination,
       date,
       lateCheckIn,
     });
   }
   async getCheapestHotel(destination: string, lateCheckIn?: string) {
-    return this.httpClient.call(`${SERVICE_URL.hotels}/hotels/cheapest`, {
-      destination,
-      lateCheckIn,
-    });
+    return this.httpClient.call(
+      "GET",
+      `${SERVICE_URL.hotels}/hotels/cheapest`,
+      null,
+      {
+        destination,
+        lateCheckIn,
+      }
+    );
   }
 
   // Weather
   async getWeather(destination: string, date: string) {
-    return this.httpClient.call(`${SERVICE_URL.weather}/weather`, {
+    return this.httpClient.call("GET", `${SERVICE_URL.weather}/weather`, null, {
       destination,
       date,
     });
@@ -154,7 +152,7 @@ export class AggregatorService {
     date?: string,
     category: string = "beach"
   ) {
-    return this.httpClient.call(`${SERVICE_URL.events}/events`, {
+    return this.httpClient.call("GET", `${SERVICE_URL.events}/events`, null, {
       destination,
       date,
       category,

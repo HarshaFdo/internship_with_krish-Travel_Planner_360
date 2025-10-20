@@ -20,22 +20,20 @@ const chaining_1 = require("../utils/chaining");
 const branching_1 = require("../utils/branching");
 const circuit_breaker_1 = require("../utils/circuit-breaker");
 const HttpClient_1 = require("../utils/HttpClient");
-const metrics_1 = require("../utils/metrics");
 let AggregatorService = AggregatorService_1 = class AggregatorService {
-    constructor(scatterGather, chaining, branching, circuitBreaker, httpClient, metrics) {
+    constructor(scatterGather, chaining, branching, circuitBreaker, httpClient) {
         this.scatterGather = scatterGather;
         this.chaining = chaining;
         this.branching = branching;
         this.circuitBreaker = circuitBreaker;
         this.httpClient = httpClient;
-        this.metrics = metrics;
         this.logger = new common_1.Logger(AggregatorService_1.name);
     }
     // weather service with circuit breaker
     async fetchWeatherWithCircuitBreaker(destination, date) {
         this.logger.log(`[AggregatorService] Fetching weather for ${destination} on ${date}`);
         try {
-            const weather = await this.circuitBreaker.execute(() => this.httpClient.call(`${HttpClient_1.SERVICE_URL.weather}/weather`, {
+            const weather = await this.circuitBreaker.execute(() => this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, null, {
                 destination,
                 date,
             }), () => ({
@@ -85,14 +83,14 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
     // Microservices Client methods
     // Flights
     async getFlights(from, to, date) {
-        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.flights}/flights`, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights`, null, {
             from,
             to,
             date,
         });
     }
     async getCheapestFlight(from, to, date) {
-        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.flights}/flights/cheapest`, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights/cheapest`, null, {
             from,
             to,
             date,
@@ -100,28 +98,28 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
     }
     // Hotels
     async getHotels(destination, date, lateCheckIn) {
-        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.hotels}/hotels`, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.hotels}/hotels`, null, {
             destination,
             date,
             lateCheckIn,
         });
     }
     async getCheapestHotel(destination, lateCheckIn) {
-        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.hotels}/hotels/cheapest`, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.hotels}/hotels/cheapest`, null, {
             destination,
             lateCheckIn,
         });
     }
     // Weather
     async getWeather(destination, date) {
-        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.weather}/weather`, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, null, {
             destination,
             date,
         });
     }
     // Events
     async getEvents(destination, date, category = "beach") {
-        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.events}/events`, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.events}/events`, null, {
             destination,
             date,
             category,
@@ -136,7 +134,6 @@ exports.AggregatorService = AggregatorService = AggregatorService_1 = __decorate
         chaining_1.Chaining,
         branching_1.Branching,
         circuit_breaker_1.CircuitBreaker,
-        HttpClient_1.HttpClient,
-        metrics_1.Metrics])
+        HttpClient_1.HttpClient])
 ], AggregatorService);
 //# sourceMappingURL=aggregator.service.js.map
