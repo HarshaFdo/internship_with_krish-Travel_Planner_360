@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var BranchingService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchingService = void 0;
 const common_1 = require("@nestjs/common");
@@ -85,6 +86,6 @@ let BranchingService = BranchingService_1 = class BranchingService {
 exports.BranchingService = BranchingService;
 exports.BranchingService = BranchingService = BranchingService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClient_service_1.HttpClientsService])
+    __metadata("design:paramtypes", [typeof (_a = typeof HttpClient_service_1.HttpClientsService !== "undefined" && HttpClient_service_1.HttpClientsService) === "function" ? _a : Object])
 ], BranchingService);
 //# sourceMappingURL=branching.service%20copy.js.map

@@ -3,7 +3,6 @@ import { ScatterGather } from "../utils/scatter-gather";
 import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { TripSearchDto } from "../dto/trip-search.dto";
-import { CircuitBreaker } from "../utils/circuit-breaker";
 import { Metrics } from "../utils/metrics";
 
 @Controller("v1/trips")
@@ -47,12 +46,4 @@ export class MetricsController {
   }
 }
 
-@Controller("v2/circuit-breaker")
-export class CircuitBreakerController {
-  constructor(private readonly circuitBreaker: CircuitBreaker) {}
 
-  @Get()
-  getCircuitBreakerState() {
-    return this.circuitBreaker.getState();
-  }
-}

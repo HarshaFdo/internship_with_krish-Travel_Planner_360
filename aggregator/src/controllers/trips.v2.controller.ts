@@ -9,6 +9,7 @@ import { ScatterGather } from "../utils/scatter-gather";
 import { TripSearchDto } from "../dto/trip-search.dto";
 import { Metrics } from "../utils/metrics";
 import { AggregatorService } from "../services/aggregator.service";
+import { CircuitBreaker } from "../utils/circuit-breaker";
 
 @Controller("v2/trips")
 export class TripsV2Controller {
@@ -41,5 +42,15 @@ export class TripsV2Controller {
       ...response,
       version: "v2",
     };
+  }
+}
+
+@Controller("v2/circuit-breaker")
+export class CircuitBreakerController {
+  constructor(private readonly circuitBreaker: CircuitBreaker) {}
+
+  @Get()
+  getCircuitBreakerState() {
+    return this.circuitBreaker.getState();
   }
 }
