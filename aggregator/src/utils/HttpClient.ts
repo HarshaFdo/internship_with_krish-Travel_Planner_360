@@ -22,20 +22,22 @@ export class HttpClient {
   constructor(private readonly httpService: HttpService) {}
   async call(
     endpoint: string,
-    // body: any,
-    // queries?: Record<string,any>,
-    params?: Record<string, any>
+    body?: any,
+    queries?: Record<string, any>,
   ): Promise<any> {
     // Filter the undefined values to avoid sending them as query parameters.
-    const cleanParams = params
+  const cleanQuery = queries
       ? Object.fromEntries(
-          Object.entries(params).filter(([_, v]) => v !== undefined)
+          Object.entries(queries).filter(([_, v]) => v !== undefined)
         )
       : undefined;
 
     try {
       const response = await firstValueFrom(
-        this.httpService.get(endpoint, { params: cleanParams })
+        this.httpService.get(endpoint, {
+          params: cleanQuery,
+          data: body,
+        })
       );
       return response.data;
     } catch (error) {

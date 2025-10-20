@@ -25,16 +25,16 @@ let HttpClient = HttpClient_1 = class HttpClient {
         this.httpService = httpService;
         this.logger = new common_1.Logger(HttpClient_1.name);
     }
-    async call(endpoint, 
-    // body: any,
-    // queries?: Record<string,any>,
-    params) {
+    async call(endpoint, body, queries) {
         // Filter the undefined values to avoid sending them as query parameters.
-        const cleanParams = params
-            ? Object.fromEntries(Object.entries(params).filter(([_, v]) => v !== undefined))
+        const cleanQuery = queries
+            ? Object.fromEntries(Object.entries(queries).filter(([_, v]) => v !== undefined))
             : undefined;
         try {
-            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(endpoint, { params: cleanParams }));
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(endpoint, {
+                params: cleanQuery,
+                data: body,
+            }));
             return response.data;
         }
         catch (error) {

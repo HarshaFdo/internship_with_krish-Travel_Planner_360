@@ -74,32 +74,28 @@ export class AggregatorService {
     to: string,
     date: string,
     includeWeather: boolean = false,
-    version: ApiVersion = "v1"
   ) {
-    this.metrics.trackRequest(version, "scatter-gather");
 
-    const respone = await this.scatterGather.execute(from, to, date);
+    const response = await this.scatterGather.execute(from, to, date);
 
     if (includeWeather) {
       const weather = await this.fetchWeatherWithCircuitBreaker(to, date);
-      respone.weather = weather;
+      response.weather = weather;
 
       if (weather.degraded) {
-        respone.degraded = true;
-        respone.metadata.weatherError = weather.error;
+        response.degraded = true;
+        response.metadata.weatherError = weather.error;
       }
     }
 
-    return respone;
+    return response;
   }
 
   async executeChaining(
     from: string,
     to: string,
     date: string,
-    version: ApiVersion
   ) {
-    this.metrics.trackRequest(version, "chaining");
     return this.chaining.execute(from, to, date);
   }
 
@@ -107,9 +103,7 @@ export class AggregatorService {
     from: string,
     to: string,
     date: string,
-    version: ApiVersion
   ) {
-    this.metrics.trackRequest(version, "chaining");
     return this.branching.execute(from, to, date);
   }
 

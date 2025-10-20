@@ -64,25 +64,22 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
         }
     }
     // Aggregator pattern methods
-    async executeScatterGather(from, to, date, includeWeather = false, version = "v1") {
-        this.metrics.trackRequest(version, "scatter-gather");
-        const respone = await this.scatterGather.execute(from, to, date);
+    async executeScatterGather(from, to, date, includeWeather = false) {
+        const response = await this.scatterGather.execute(from, to, date);
         if (includeWeather) {
             const weather = await this.fetchWeatherWithCircuitBreaker(to, date);
-            respone.weather = weather;
+            response.weather = weather;
             if (weather.degraded) {
-                respone.degraded = true;
-                respone.metadata.weatherError = weather.error;
+                response.degraded = true;
+                response.metadata.weatherError = weather.error;
             }
         }
-        return respone;
+        return response;
     }
-    async executeChaining(from, to, date, version) {
-        this.metrics.trackRequest(version, "chaining");
+    async executeChaining(from, to, date) {
         return this.chaining.execute(from, to, date);
     }
-    async executeBranching(from, to, date, version) {
-        this.metrics.trackRequest(version, "chaining");
+    async executeBranching(from, to, date) {
         return this.branching.execute(from, to, date);
     }
     // Microservices Client methods

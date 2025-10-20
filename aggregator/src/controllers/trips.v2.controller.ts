@@ -35,7 +35,6 @@ export class TripsV2Controller {
       query.to!,
       query.date!,
       true, // enable weather for v2
-      "v2"
     );
 
     return {

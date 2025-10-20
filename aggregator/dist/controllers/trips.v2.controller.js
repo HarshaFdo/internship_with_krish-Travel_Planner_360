@@ -31,8 +31,7 @@ let TripsV2Controller = TripsV2Controller_1 = class TripsV2Controller {
         this.metrics.trackRequest("v2", "/v2/trips/search");
         this.logger.log(`[V2] /search called with from=${query.from}, to=${query.to}, date=${query.date}`);
         // pass true value to sinclude weather for v2
-        const response = await this.aggregatorService.executeScatterGather(query.from, query.to, query.date, true, // enable weather for v2
-        "v2");
+        const response = await this.aggregatorService.executeScatterGather(query.from, query.to, query.date, true);
         return {
             ...response,
             version: "v2",

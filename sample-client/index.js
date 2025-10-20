@@ -68,7 +68,7 @@ async function showMetrics() {
     if (v2Adoption >= 95) {
       console.log("v2 adoption>95% - Ready to retire v1");
     } else if (v2Adoption >= 50) {
-      console.log("v2 adoption>50% - 0n track");
+      console.log("v2 adoption>50% - On track");
     } else {
       console.log("v2 adoption <50% - Early phase");
     }
