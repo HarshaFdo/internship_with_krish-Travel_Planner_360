@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { isCoastalDestination } from "./location-utils";
-import { HttpClients } from "./HttpClient";
+import { AggregatorService } from '../services/aggregator.service';
 
 @Injectable()
 export class Branching {
   private readonly logger = new Logger(Branching.name);
 
-  constructor(private readonly httpClients: HttpClients) {}
+  constructor(private readonly aggregatorService: AggregatorService) {}
 
   async execute(from: string, to: string, date: string) {
     const startTime = Date.now();
@@ -24,8 +24,8 @@ export class Branching {
 
       // Scatter-Gather
       const [flightResponse, hotelResponse] = await Promise.allSettled([
-        this.httpClients.getFlights(from, to, date),
-        this.httpClients.getHotels(to, date),
+        this.aggregatorService.getFlights(from, to, date),
+        this.aggregatorService.getHotels(to, date),
       ]);
 
       const response: any = {
@@ -45,7 +45,7 @@ export class Branching {
           `[Branching] Destination is Coastal - fetching events for ${to}...`
         );
 
-        const eventResponse = await this.httpClients.getEvents(to, date);
+        const eventResponse = await this.aggregatorService.getEvents(to, date);
         response.events = eventResponse.events || [];
 
         this.logger.log(

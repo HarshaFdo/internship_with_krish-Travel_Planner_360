@@ -18,8 +18,8 @@ const scatter_gather_1 = require("../utils/scatter-gather");
 const chaining_1 = require("../utils/chaining");
 const branching_1 = require("../utils/branching");
 const trip_search_dto_1 = require("../dto/trip-search.dto");
-const aggregator_service_1 = require("../services/aggregator.service");
 const circuit_breaker_1 = require("../utils/circuit-breaker");
+const metrics_1 = require("../utils/metrics");
 let TripsV1Controller = class TripsV1Controller {
     constructor(scatterGather, chaining, branching, metrics) {
         this.scatterGather = scatterGather;
@@ -70,7 +70,7 @@ exports.TripsV1Controller = TripsV1Controller = __decorate([
     __metadata("design:paramtypes", [scatter_gather_1.ScatterGather,
         chaining_1.Chaining,
         branching_1.Branching,
-        aggregator_service_1.AggregatorService])
+        metrics_1.Metrics])
 ], TripsV1Controller);
 let MetricsController = class MetricsController {
     constructor(metrics) {
@@ -89,7 +89,7 @@ __decorate([
 ], MetricsController.prototype, "getMetrics", null);
 exports.MetricsController = MetricsController = __decorate([
     (0, common_1.Controller)("metrics"),
-    __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
+    __metadata("design:paramtypes", [metrics_1.Metrics])
 ], MetricsController);
 let CircuitBreakerController = class CircuitBreakerController {
     constructor(circuitBreaker) {

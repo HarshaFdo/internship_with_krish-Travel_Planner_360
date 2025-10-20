@@ -1,17 +1,21 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
 } from "@nestjs/common";
-import { HttpClients } from "./HttpClient";
+import { AggregatorService } from '../services/aggregator.service';
 
 @Injectable()
 export class Chaining {
   private readonly logger = new Logger(Chaining.name);
 
-  constructor(private readonly httpClients: HttpClients) {}
+  constructor(
+    @Inject(forwardRef(() => AggregatorService))
+    private readonly aggregatorService: AggregatorService) {}
 
   async execute(from: string, to: string, date: string) {
     const startTime = Date.now();
@@ -24,7 +28,7 @@ export class Chaining {
     try {
       // step 1: getting the cheapest flight
       this.logger.log("[Chaining] 1. Fetching the cheapest fright...");
-      const flightResponse = await this.httpClients.getCheapestFlight(
+      const flightResponse = await this.aggregatorService.getCheapestFlight(
         from,
         to,
         date
@@ -51,7 +55,7 @@ export class Chaining {
       this.logger.log(
         `[Chaining] 2. Fetching the cheapest hotel (lateArrival: ${isLateArrival}) ...`
       );
-      const hotelResponse = await this.httpClients.getCheapestHotel(
+      const hotelResponse = await this.aggregatorService.getCheapestHotel(
         to,
         isLateArrival
       );

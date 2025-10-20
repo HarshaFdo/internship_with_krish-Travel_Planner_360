@@ -8,14 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var Chaining_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chaining = void 0;
 const common_1 = require("@nestjs/common");
-const HttpClient_1 = require("./HttpClient");
+const aggregator_service_1 = require("../services/aggregator.service");
 let Chaining = Chaining_1 = class Chaining {
-    constructor(httpClients) {
-        this.httpClients = httpClients;
+    constructor(aggregatorService) {
+        this.aggregatorService = aggregatorService;
         this.logger = new common_1.Logger(Chaining_1.name);
     }
     async execute(from, to, date) {
@@ -25,7 +28,7 @@ let Chaining = Chaining_1 = class Chaining {
         try {
             // step 1: getting the cheapest flight
             this.logger.log("[Chaining] 1. Fetching the cheapest fright...");
-            const flightResponse = await this.httpClients.getCheapestFlight(from, to, date);
+            const flightResponse = await this.aggregatorService.getCheapestFlight(from, to, date);
             if (!flightResponse.flights) {
                 this.logger.warn(`[Chaining] No flight is found`);
                 throw new common_1.NotFoundException({
@@ -40,7 +43,7 @@ let Chaining = Chaining_1 = class Chaining {
             this.logger.log(`[Chaining] 1- complete. Fetched the cheapest flight: ${flight.id} - Arrival: ${flight.arriveTime} - Late Arrival: ${isLateArrival}`);
             // step 2: getting the cheapest hotel based on the arrival time.
             this.logger.log(`[Chaining] 2. Fetching the cheapest hotel (lateArrival: ${isLateArrival}) ...`);
-            const hotelResponse = await this.httpClients.getCheapestHotel(to, isLateArrival);
+            const hotelResponse = await this.aggregatorService.getCheapestHotel(to, isLateArrival);
             if (!hotelResponse.hotels) {
                 this.logger.warn(`[Chaining] No hotel is found`);
                 throw new common_1.NotFoundException({
@@ -98,6 +101,7 @@ let Chaining = Chaining_1 = class Chaining {
 exports.Chaining = Chaining;
 exports.Chaining = Chaining = Chaining_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClient_1.HttpClients])
+    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => aggregator_service_1.AggregatorService))),
+    __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
 ], Chaining);
 //# sourceMappingURL=chaining.js.map

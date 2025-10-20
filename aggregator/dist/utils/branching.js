@@ -13,10 +13,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Branching = void 0;
 const common_1 = require("@nestjs/common");
 const location_utils_1 = require("./location-utils");
-const HttpClient_1 = require("./HttpClient");
+const aggregator_service_1 = require("../services/aggregator.service");
 let Branching = Branching_1 = class Branching {
-    constructor(httpClients) {
-        this.httpClients = httpClients;
+    constructor(aggregatorService) {
+        this.aggregatorService = aggregatorService;
         this.logger = new common_1.Logger(Branching_1.name);
     }
     async execute(from, to, date) {
@@ -29,8 +29,8 @@ let Branching = Branching_1 = class Branching {
             this.logger.log(`[Branching] Fetching flights and hotels in parallel...`);
             // Scatter-Gather
             const [flightResponse, hotelResponse] = await Promise.allSettled([
-                this.httpClients.getFlights(from, to, date),
-                this.httpClients.getHotels(to, date),
+                this.aggregatorService.getFlights(from, to, date),
+                this.aggregatorService.getHotels(to, date),
             ]);
             const response = {
                 flights: flightResponse.status === "fulfilled"
@@ -43,7 +43,7 @@ let Branching = Branching_1 = class Branching {
             //based on the destination(coastal/inland) we have to fetch the activities
             if (isCoastal) {
                 this.logger.log(`[Branching] Destination is Coastal - fetching events for ${to}...`);
-                const eventResponse = await this.httpClients.getEvents(to, date);
+                const eventResponse = await this.aggregatorService.getEvents(to, date);
                 response.events = eventResponse.events || [];
                 this.logger.log(`[Branching] Fetched the events - ${response.events.length} events that found.`);
             }
@@ -86,6 +86,6 @@ let Branching = Branching_1 = class Branching {
 exports.Branching = Branching;
 exports.Branching = Branching = Branching_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClient_1.HttpClients])
+    __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
 ], Branching);
 //# sourceMappingURL=branching.js.map

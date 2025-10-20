@@ -1,6 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { HttpClients } from "./HttpClient";
-import { CircuitBreaker } from "./circuit-breaker";
+import { AggregatorService } from '../services/aggregator.service';
 
 @Injectable()
 export class ScatterGather {
@@ -8,8 +7,7 @@ export class ScatterGather {
   private readonly TIMEOUT_MS = 1000;
 
   constructor(
-    private readonly HttpClients: HttpClients,
-    private readonly circuitBreaker: CircuitBreaker
+    private readonly aggregatorService: AggregatorService,
   ) {}
 
   async execute(from: string, to: string, date: string) {
@@ -18,7 +16,7 @@ export class ScatterGather {
       `[Scatter-Gather] Starting parallel calls for ${from} -> ${to} on ${date})`
     );
 
-    const flightPromise = this.HttpClients.getFlights(from, to, date)
+    const flightPromise = this.aggregatorService.getFlights(from, to, date)
       .then((data) => ({ data, service: "flight", success: true }))
       .catch((error) => ({
         data: null,
@@ -27,7 +25,7 @@ export class ScatterGather {
         error: error.message,
       }));
 
-    const hotelPromise = this.HttpClients.getHotels(to, date)
+    const hotelPromise = this.aggregatorService.getHotels(to, date)
       .then((data) => ({ data, service: "hotel", success: true }))
       .catch((error) => ({
         data: null,
@@ -48,8 +46,6 @@ export class ScatterGather {
     ]);
 
     const elapsedTime = Date.now() - startTime;
-
-    let response: any;
 
     if (results && typeof results === "object" && "timeout" in results) {
       this.logger.warn(

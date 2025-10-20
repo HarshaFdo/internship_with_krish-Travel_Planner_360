@@ -12,19 +12,17 @@ var ScatterGather_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterGather = void 0;
 const common_1 = require("@nestjs/common");
-const HttpClient_1 = require("./HttpClient");
-const circuit_breaker_1 = require("./circuit-breaker");
+const aggregator_service_1 = require("../services/aggregator.service");
 let ScatterGather = ScatterGather_1 = class ScatterGather {
-    constructor(HttpClients, circuitBreaker) {
-        this.HttpClients = HttpClients;
-        this.circuitBreaker = circuitBreaker;
+    constructor(aggregatorService) {
+        this.aggregatorService = aggregatorService;
         this.logger = new common_1.Logger(ScatterGather_1.name);
         this.TIMEOUT_MS = 1000;
     }
     async execute(from, to, date) {
         const startTime = Date.now();
         this.logger.log(`[Scatter-Gather] Starting parallel calls for ${from} -> ${to} on ${date})`);
-        const flightPromise = this.HttpClients.getFlights(from, to, date)
+        const flightPromise = this.aggregatorService.getFlights(from, to, date)
             .then((data) => ({ data, service: "flight", success: true }))
             .catch((error) => ({
             data: null,
@@ -32,7 +30,7 @@ let ScatterGather = ScatterGather_1 = class ScatterGather {
             success: false,
             error: error.message,
         }));
-        const hotelPromise = this.HttpClients.getHotels(to, date)
+        const hotelPromise = this.aggregatorService.getHotels(to, date)
             .then((data) => ({ data, service: "hotel", success: true }))
             .catch((error) => ({
             data: null,
@@ -50,7 +48,6 @@ let ScatterGather = ScatterGather_1 = class ScatterGather {
             timeoutPromise,
         ]);
         const elapsedTime = Date.now() - startTime;
-        let response;
         if (results && typeof results === "object" && "timeout" in results) {
             this.logger.warn(`[Scatter-Gather] Timeout occurred after ${this.TIMEOUT_MS} ms - returning partial results`);
             const partialResults = await Promise.allSettled([
@@ -107,7 +104,6 @@ let ScatterGather = ScatterGather_1 = class ScatterGather {
 exports.ScatterGather = ScatterGather;
 exports.ScatterGather = ScatterGather = ScatterGather_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [HttpClient_1.HttpClients,
-        circuit_breaker_1.CircuitBreaker])
+    __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
 ], ScatterGather);
 //# sourceMappingURL=scatter-gather.js.map

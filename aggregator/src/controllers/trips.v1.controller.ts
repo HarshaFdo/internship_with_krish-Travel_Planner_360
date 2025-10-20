@@ -3,8 +3,8 @@ import { ScatterGather } from "../utils/scatter-gather";
 import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { TripSearchDto } from "../dto/trip-search.dto";
-import { AggregatorService } from "../services/aggregator.service";
 import { CircuitBreaker } from "../utils/circuit-breaker";
+import { Metrics } from "../utils/metrics";
 
 @Controller("v1/trips")
 export class TripsV1Controller {
@@ -12,7 +12,7 @@ export class TripsV1Controller {
     private readonly scatterGather: ScatterGather,
     private readonly chaining: Chaining,
     private readonly branching: Branching,
-    private readonly metrics: AggregatorService
+    private readonly metrics: Metrics
   ) {}
 
   // for scatter-gather pattern
@@ -39,7 +39,7 @@ export class TripsV1Controller {
 
 @Controller("metrics")
 export class MetricsController {
-  constructor(private readonly metrics: AggregatorService) {}
+  constructor(private readonly metrics: Metrics) {}
 
   @Get()
   getMetrics() {

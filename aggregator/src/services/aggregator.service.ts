@@ -1,67 +1,25 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { ScatterGather } from "../utils/scatter-gather";
 import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { CircuitBreaker } from "../utils/circuit-breaker";
-import { HttpClients } from "../utils/HttpClient";
-
-interface TrafficMetrics {
-  v1Requests: number;
-  v2Requests: number;
-  startTime: Date;
-}
+import { HttpClient, SERVICE_URL } from "../utils/HttpClient";
+import { Metrics } from "../utils/metrics";
+import { ApiVersion } from "../types";
 
 @Injectable()
 export class AggregatorService {
   private readonly logger = new Logger(AggregatorService.name);
-  private metrics: TrafficMetrics = {
-    v1Requests: 0,
-    v2Requests: 0,
-    startTime: new Date(),
-  };
 
   constructor(
     private readonly scatterGather: ScatterGather,
+    @Inject(forwardRef(() => Chaining))
     private readonly chaining: Chaining,
     private readonly branching: Branching,
     private readonly circuitBreaker: CircuitBreaker,
-    private readonly httpClients: HttpClients
+    private readonly httpClient: HttpClient,
+    private readonly metrics: Metrics
   ) {}
-
-  // Metrics methods
-  trackRequest(version: "v1" | "v2", endpoint: string) {
-    const key = version === "v1" ? "v1Requests" : "v2Requests";
-    this.metrics[key]++;
-    this.logger.log(
-      `[Metrics] ${version.toUpperCase()} request to ${endpoint} | Total ${version.toUpperCase()} requests: ${this.metrics[key]}`
-    );
-  }
-
-  getMetrics() {
-    const { v1Requests, v2Requests } = this.metrics;
-    const total = v1Requests + v2Requests;
-
-    const calcPercentage = (count: number) =>
-      total ? ((count / total) * 100).toFixed(2) + "%" : "0.00%";
-
-    return {
-      v1Requests,
-      v2Requests,
-      totalRequests: total,
-      v1Percentage: calcPercentage(v1Requests),
-      v2Percentage: calcPercentage(v2Requests),
-      uptime: this.getUptime(),
-    };
-  }
-
-  private getUptime() {
-    const now = new Date();
-    const difference = now.getTime() - this.metrics.startTime.getTime();
-    const hours = Math.floor(difference / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-
-    return `${hours}h ${minutes}m`;
-  }
 
   // weather service with circuit breaker
   async fetchWeatherWithCircuitBreaker(destination: string, date: string) {
@@ -71,7 +29,11 @@ export class AggregatorService {
 
     try {
       const weather = await this.circuitBreaker.execute(
-        () => this.httpClients.getWeather(destination, date),
+        () =>
+          this.httpClient.call(`${SERVICE_URL.weather}/weather`, {
+            destination,
+            date,
+          }),
         () => ({
           destination,
           forecast: [],
@@ -106,13 +68,16 @@ export class AggregatorService {
     }
   }
 
-  // TODO: Add aggregator pattern methods here later
+  // Aggregator pattern methods
   async executeScatterGather(
     from: string,
     to: string,
     date: string,
-    includeWeather: boolean = false
+    includeWeather: boolean = false,
+    version: ApiVersion = "v1"
   ) {
+    this.metrics.trackRequest(version, "scatter-gather");
+
     const respone = await this.scatterGather.execute(from, to, date);
 
     if (includeWeather) {
@@ -128,11 +93,77 @@ export class AggregatorService {
     return respone;
   }
 
-  async executeChaining(from: string, to: string, date: string) {
+  async executeChaining(
+    from: string,
+    to: string,
+    date: string,
+    version: ApiVersion
+  ) {
+    this.metrics.trackRequest(version, "chaining");
     return this.chaining.execute(from, to, date);
   }
 
-  async executeBranching(from: string, to: string, date: string) {
+  async executeBranching(
+    from: string,
+    to: string,
+    date: string,
+    version: ApiVersion
+  ) {
+    this.metrics.trackRequest(version, "chaining");
     return this.branching.execute(from, to, date);
+  }
+
+  // Microservices Client methods
+  // Flights
+  async getFlights(from?: string, to?: string, date?: string) {
+    return this.httpClient.call(`${SERVICE_URL.flights}/flights`, {
+      from,
+      to,
+      date,
+    });
+  }
+
+  async getCheapestFlight(from: string, to: string, date?: string) {
+    return this.httpClient.call(`${SERVICE_URL.flights}/flights/cheapest`, {
+      from,
+      to,
+      date,
+    });
+  }
+
+  // Hotels
+  async getHotels(destination: string, date: string, lateCheckIn?: string) {
+    return this.httpClient.call(`${SERVICE_URL.hotels}/hotels`, {
+      destination,
+      date,
+      lateCheckIn,
+    });
+  }
+  async getCheapestHotel(destination: string, lateCheckIn?: string) {
+    return this.httpClient.call(`${SERVICE_URL.hotels}/hotels/cheapest`, {
+      destination,
+      lateCheckIn,
+    });
+  }
+
+  // Weather
+  async getWeather(destination: string, date: string) {
+    return this.httpClient.call(`${SERVICE_URL.weather}/weather`, {
+      destination,
+      date,
+    });
+  }
+
+  // Events
+  async getEvents(
+    destination: string,
+    date?: string,
+    category: string = "beach"
+  ) {
+    return this.httpClient.call(`${SERVICE_URL.events}/events`, {
+      destination,
+      date,
+      category,
+    });
   }
 }

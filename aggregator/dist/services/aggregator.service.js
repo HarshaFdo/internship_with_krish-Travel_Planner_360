@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var AggregatorService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AggregatorService = void 0;
@@ -17,51 +20,25 @@ const chaining_1 = require("../utils/chaining");
 const branching_1 = require("../utils/branching");
 const circuit_breaker_1 = require("../utils/circuit-breaker");
 const HttpClient_1 = require("../utils/HttpClient");
+const metrics_1 = require("../utils/metrics");
 let AggregatorService = AggregatorService_1 = class AggregatorService {
-    constructor(scatterGather, chaining, branching, circuitBreaker, httpClients) {
+    constructor(scatterGather, chaining, branching, circuitBreaker, httpClient, metrics) {
         this.scatterGather = scatterGather;
         this.chaining = chaining;
         this.branching = branching;
         this.circuitBreaker = circuitBreaker;
-        this.httpClients = httpClients;
+        this.httpClient = httpClient;
+        this.metrics = metrics;
         this.logger = new common_1.Logger(AggregatorService_1.name);
-        this.metrics = {
-            v1Requests: 0,
-            v2Requests: 0,
-            startTime: new Date(),
-        };
-    }
-    // Metrics methods
-    trackRequest(version, endpoint) {
-        const key = version === "v1" ? "v1Requests" : "v2Requests";
-        this.metrics[key]++;
-        this.logger.log(`[Metrics] ${version.toUpperCase()} request to ${endpoint} | Total ${version.toUpperCase()} requests: ${this.metrics[key]}`);
-    }
-    getMetrics() {
-        const { v1Requests, v2Requests } = this.metrics;
-        const total = v1Requests + v2Requests;
-        const calcPercentage = (count) => total ? ((count / total) * 100).toFixed(2) + "%" : "0.00%";
-        return {
-            v1Requests,
-            v2Requests,
-            totalRequests: total,
-            v1Percentage: calcPercentage(v1Requests),
-            v2Percentage: calcPercentage(v2Requests),
-            uptime: this.getUptime(),
-        };
-    }
-    getUptime() {
-        const now = new Date();
-        const difference = now.getTime() - this.metrics.startTime.getTime();
-        const hours = Math.floor(difference / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        return `${hours}h ${minutes}m`;
     }
     // weather service with circuit breaker
     async fetchWeatherWithCircuitBreaker(destination, date) {
         this.logger.log(`[AggregatorService] Fetching weather for ${destination} on ${date}`);
         try {
-            const weather = await this.circuitBreaker.execute(() => this.httpClients.getWeather(destination, date), () => ({
+            const weather = await this.circuitBreaker.execute(() => this.httpClient.call(`${HttpClient_1.SERVICE_URL.weather}/weather`, {
+                destination,
+                date,
+            }), () => ({
                 destination,
                 forecast: [],
                 degraded: true,
@@ -86,8 +63,9 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
             };
         }
     }
-    // TODO: Add aggregator pattern methods here later
-    async executeScatterGather(from, to, date, includeWeather = false) {
+    // Aggregator pattern methods
+    async executeScatterGather(from, to, date, includeWeather = false, version = "v1") {
+        this.metrics.trackRequest(version, "scatter-gather");
         const respone = await this.scatterGather.execute(from, to, date);
         if (includeWeather) {
             const weather = await this.fetchWeatherWithCircuitBreaker(to, date);
@@ -99,20 +77,69 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
         }
         return respone;
     }
-    async executeChaining(from, to, date) {
+    async executeChaining(from, to, date, version) {
+        this.metrics.trackRequest(version, "chaining");
         return this.chaining.execute(from, to, date);
     }
-    async executeBranching(from, to, date) {
+    async executeBranching(from, to, date, version) {
+        this.metrics.trackRequest(version, "chaining");
         return this.branching.execute(from, to, date);
+    }
+    // Microservices Client methods
+    // Flights
+    async getFlights(from, to, date) {
+        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.flights}/flights`, {
+            from,
+            to,
+            date,
+        });
+    }
+    async getCheapestFlight(from, to, date) {
+        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.flights}/flights/cheapest`, {
+            from,
+            to,
+            date,
+        });
+    }
+    // Hotels
+    async getHotels(destination, date, lateCheckIn) {
+        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.hotels}/hotels`, {
+            destination,
+            date,
+            lateCheckIn,
+        });
+    }
+    async getCheapestHotel(destination, lateCheckIn) {
+        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.hotels}/hotels/cheapest`, {
+            destination,
+            lateCheckIn,
+        });
+    }
+    // Weather
+    async getWeather(destination, date) {
+        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.weather}/weather`, {
+            destination,
+            date,
+        });
+    }
+    // Events
+    async getEvents(destination, date, category = "beach") {
+        return this.httpClient.call(`${HttpClient_1.SERVICE_URL.events}/events`, {
+            destination,
+            date,
+            category,
+        });
     }
 };
 exports.AggregatorService = AggregatorService;
 exports.AggregatorService = AggregatorService = AggregatorService_1 = __decorate([
     (0, common_1.Injectable)(),
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => chaining_1.Chaining))),
     __metadata("design:paramtypes", [scatter_gather_1.ScatterGather,
         chaining_1.Chaining,
         branching_1.Branching,
         circuit_breaker_1.CircuitBreaker,
-        HttpClient_1.HttpClients])
+        HttpClient_1.HttpClient,
+        metrics_1.Metrics])
 ], AggregatorService);
 //# sourceMappingURL=aggregator.service.js.map

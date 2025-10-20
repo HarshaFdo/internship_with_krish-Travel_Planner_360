@@ -13,13 +13,13 @@ export class AppService {
 
     if (query.from) {
       results = results.filter(
-        (flight) => flight.from.toLocaleLowerCase() === query.from.toLocaleLowerCase()
+        (flight) => flight.from.toLocaleLowerCase() === query.from!.toLocaleLowerCase()
       );
     }
 
     if (query.to) {
       results = results.filter(
-        (flight) => flight.to.toLocaleLowerCase() === query.to.toLocaleLowerCase()
+        (flight) => flight.to.toLocaleLowerCase() === query.to!.toLocaleLowerCase()
       );
     }
 
