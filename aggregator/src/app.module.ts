@@ -1,15 +1,15 @@
 import { Module } from "@nestjs/common";
-import { HttpClients } from "./utils/HttpClient";
+import { HttpClient } from "./utils/HttpClient";
 import { HttpModule } from "@nestjs/axios";
 import { MetricsController, TripsV1Controller } from "./controllers/trips.v1.controller";
-import { ScatterGather } from "./utils/scatter-gather";
+import { ScatterGather } from './utils/scatter-gather';
 import { Chaining } from "./utils/chaining";
 import { Branching } from "./utils/branching";
-import { TripsV2Controller } from "./controllers/trips.v2.controller";
+import { CircuitBreakerController, TripsV2Controller } from "./controllers/trips.v2.controller";
 import { CircuitBreaker } from "./utils/circuit-breaker";
-import { CircuitBreakerController } from "./controllers/circuit-breaker.controller";
 import { AggregatorService } from "./services/aggregator.service";
 import { ConfigModule } from "@nestjs/config";
+import { Metrics } from "./utils/metrics";
 
 @Module({
   imports: [
@@ -26,12 +26,13 @@ import { ConfigModule } from "@nestjs/config";
     CircuitBreakerController,
   ],
   providers: [
-    HttpClients,
+    HttpClient,
     AggregatorService,
     ScatterGather,
     Chaining,
     Branching,
     CircuitBreaker,
+    Metrics,
   ],
 })
 export class AppModule {}

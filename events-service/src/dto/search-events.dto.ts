@@ -12,7 +12,7 @@ import {
 import { Type } from "class-transformer";
 
 export class SearchEventsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   destination!: string;
 
@@ -20,7 +20,7 @@ export class SearchEventsDto {
   @IsDateString({}, { message: "Date must be in YYYY-MM-DD format" })
   date?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   category!: string;
 }

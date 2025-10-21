@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { isCoastalDestination } from "./location-utils";
 import { AggregatorService } from '../services/aggregator.service';
 
@@ -6,7 +6,9 @@ import { AggregatorService } from '../services/aggregator.service';
 export class Branching {
   private readonly logger = new Logger(Branching.name);
 
-  constructor(private readonly aggregatorService: AggregatorService) {}
+  constructor(
+    @Inject(forwardRef(() => AggregatorService))
+    private readonly aggregatorService: AggregatorService) {}
 
   async execute(from: string, to: string, date: string) {
     const startTime = Date.now();

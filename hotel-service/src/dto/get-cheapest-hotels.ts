@@ -4,8 +4,6 @@ import { IsString, IsOptional, IsDateString, MinLength, MaxLength, IsNotEmpty, I
 export class GetCheapestHotelsDto {
   @IsNotEmpty({ message: 'from is required' })
   @IsString()
-  @MinLength(2)
-  @MaxLength(50)
   destination!: string;
 
   @IsOptional()

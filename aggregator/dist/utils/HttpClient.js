@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var HttpClient_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpClient = exports.SERVICE_URL = void 0;
+require('dotenv').config();
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const rxjs_1 = require("rxjs");
@@ -32,15 +33,7 @@ let HttpClient = HttpClient_1 = class HttpClient {
             : undefined;
         try {
             let response;
-            if (["POST", "PUT", "PATCH"].includes(method)) {
-                response = await (0, rxjs_1.firstValueFrom)(this.httpService.request({
-                    method,
-                    url: endpoint,
-                    data: body,
-                    params: cleanQuery,
-                }));
-            }
-            else if (["GET", "DELETE"].includes(method)) {
+            if (["GET", "DELETE", "POST", "PUT", "PATCH"].includes(method)) {
                 response = await (0, rxjs_1.firstValueFrom)(this.httpService.request({
                     method,
                     url: endpoint,

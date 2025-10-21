@@ -16,9 +16,9 @@ const chaining_1 = require("./utils/chaining");
 const branching_1 = require("./utils/branching");
 const trips_v2_controller_1 = require("./controllers/trips.v2.controller");
 const circuit_breaker_1 = require("./utils/circuit-breaker");
-const circuit_breaker_controller_1 = require("./controllers/circuit-breaker.controller");
 const aggregator_service_1 = require("./services/aggregator.service");
 const config_1 = require("@nestjs/config");
+const metrics_1 = require("./utils/metrics");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,15 +35,16 @@ exports.AppModule = AppModule = __decorate([
             trips_v1_controller_1.TripsV1Controller,
             trips_v2_controller_1.TripsV2Controller,
             trips_v1_controller_1.MetricsController,
-            circuit_breaker_controller_1.CircuitBreakerController,
+            trips_v2_controller_1.CircuitBreakerController,
         ],
         providers: [
-            HttpClient_1.HttpClients,
+            HttpClient_1.HttpClient,
             aggregator_service_1.AggregatorService,
             scatter_gather_1.ScatterGather,
             chaining_1.Chaining,
             branching_1.Branching,
             circuit_breaker_1.CircuitBreaker,
+            metrics_1.Metrics,
         ],
     })
 ], AppModule);

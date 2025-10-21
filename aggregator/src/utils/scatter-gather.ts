@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { AggregatorService } from '../services/aggregator.service';
 
 @Injectable()
@@ -7,6 +7,7 @@ export class ScatterGather {
   private readonly TIMEOUT_MS = 1000;
 
   constructor(
+    @Inject(forwardRef(() => AggregatorService))
     private readonly aggregatorService: AggregatorService,
   ) {}
 

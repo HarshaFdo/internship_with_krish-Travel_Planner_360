@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +8,8 @@ import {
 } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { HttpMethod } from "../types";
+
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export const SERVICE_URL = {
   flights: process.env.FLIGHTS_SERVICE_URL,
@@ -38,16 +41,7 @@ export class HttpClient {
     try {
       let response;
 
-      if (["POST", "PUT", "PATCH"].includes(method)) {
-        response = await firstValueFrom(
-          this.httpService.request({
-            method,
-            url: endpoint,
-            data: body,
-            params: cleanQuery,
-          })
-        );
-      } else if (["GET", "DELETE"].includes(method)) {
+      if (["GET", "DELETE","POST", "PUT", "PATCH"].includes(method)) {
         response = await firstValueFrom(
           this.httpService.request({
             method,

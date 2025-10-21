@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var AppService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppService = void 0;
+require('dotenv').config();
 const common_1 = require("@nestjs/common");
 const weather_data_1 = require("./data/weather.data");
 let AppService = AppService_1 = class AppService {

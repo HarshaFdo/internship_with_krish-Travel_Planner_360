@@ -17,8 +17,6 @@ exports.GetCheapestHotelsDto = GetCheapestHotelsDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'from is required' }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
 ], GetCheapestHotelsDto.prototype, "destination", void 0);
 __decorate([

@@ -5,8 +5,6 @@ import { IsBoolean, IsDateString, IsIn, IsOptional, IsString, MaxLength, MinLeng
 export class SearchHotelsDto {
   @IsOptional()
   @IsString()
-  @MinLength(2)
-  @MaxLength(50)
   destination?: string;
 
   @IsOptional()

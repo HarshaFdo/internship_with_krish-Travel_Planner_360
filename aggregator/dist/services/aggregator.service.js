@@ -20,6 +20,7 @@ const chaining_1 = require("../utils/chaining");
 const branching_1 = require("../utils/branching");
 const circuit_breaker_1 = require("../utils/circuit-breaker");
 const HttpClient_1 = require("../utils/HttpClient");
+require('dotenv').config();
 let AggregatorService = AggregatorService_1 = class AggregatorService {
     constructor(scatterGather, chaining, branching, circuitBreaker, httpClient) {
         this.scatterGather = scatterGather;
@@ -33,7 +34,7 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
     async fetchWeatherWithCircuitBreaker(destination, date) {
         this.logger.log(`[AggregatorService] Fetching weather for ${destination} on ${date}`);
         try {
-            const weather = await this.circuitBreaker.execute(() => this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, null, {
+            const weather = await this.circuitBreaker.execute(() => this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, undefined, {
                 destination,
                 date,
             }), () => ({
@@ -82,15 +83,14 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
     }
     // Microservices Client methods
     // Flights
+    //harish
     async getFlights(from, to, date) {
-        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights`, null, {
-            from,
-            to,
-            date,
-        });
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights`, undefined, // body is undefined for GET
+        { from, to, date } // send as query params
+        );
     }
     async getCheapestFlight(from, to, date) {
-        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights/cheapest`, null, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights/cheapest`, undefined, {
             from,
             to,
             date,
@@ -98,28 +98,28 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
     }
     // Hotels
     async getHotels(destination, date, lateCheckIn) {
-        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.hotels}/hotels`, null, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.hotels}/hotels`, undefined, {
             destination,
             date,
             lateCheckIn,
         });
     }
     async getCheapestHotel(destination, lateCheckIn) {
-        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.hotels}/hotels/cheapest`, null, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.hotels}/hotels/cheapest`, undefined, {
             destination,
             lateCheckIn,
         });
     }
     // Weather
     async getWeather(destination, date) {
-        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, null, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, undefined, {
             destination,
             date,
         });
     }
     // Events
     async getEvents(destination, date, category = "beach") {
-        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.events}/events`, null, {
+        return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.events}/events`, undefined, {
             destination,
             date,
             category,
@@ -129,7 +129,9 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
 exports.AggregatorService = AggregatorService;
 exports.AggregatorService = AggregatorService = AggregatorService_1 = __decorate([
     (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => scatter_gather_1.ScatterGather))),
     __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => chaining_1.Chaining))),
+    __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => branching_1.Branching))),
     __metadata("design:paramtypes", [scatter_gather_1.ScatterGather,
         chaining_1.Chaining,
         branching_1.Branching,

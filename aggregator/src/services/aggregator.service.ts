@@ -4,15 +4,18 @@ import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { CircuitBreaker } from "../utils/circuit-breaker";
 import { HttpClient, SERVICE_URL } from "../utils/HttpClient";
+require('dotenv').config();
 
 @Injectable()
 export class AggregatorService {
   private readonly logger = new Logger(AggregatorService.name);
 
   constructor(
+    @Inject(forwardRef(() => ScatterGather))
     private readonly scatterGather: ScatterGather,
     @Inject(forwardRef(() => Chaining))
     private readonly chaining: Chaining,
+    @Inject(forwardRef(() => Branching))
     private readonly branching: Branching,
     private readonly circuitBreaker: CircuitBreaker,
     private readonly httpClient: HttpClient
@@ -27,7 +30,7 @@ export class AggregatorService {
     try {
       const weather = await this.circuitBreaker.execute(
         () =>
-          this.httpClient.call("GET", `${SERVICE_URL.weather}/weather`, null, {
+          this.httpClient.call("GET", `${SERVICE_URL.weather}/weather`, undefined, {
             destination,
             date,
           }),
@@ -97,19 +100,22 @@ export class AggregatorService {
 
   // Microservices Client methods
   // Flights
-  async getFlights(from?: string, to?: string, date?: string) {
-    return this.httpClient.call("GET", `${SERVICE_URL.flights}/flights`, null, {
-      from,
-      to,
-      date,
-    });
-  }
+  //harish
+async getFlights(from?: string, to?: string, date?: string) {
+  return this.httpClient.call(
+    "GET",
+    `${SERVICE_URL.flights}/flights`,
+    undefined, // body is undefined for GET
+    { from, to, date } // send as query params
+  );
+}
+
 
   async getCheapestFlight(from: string, to: string, date?: string) {
     return this.httpClient.call(
       "GET",
       `${SERVICE_URL.flights}/flights/cheapest`,
-      null,
+      undefined,
       {
         from,
         to,
@@ -120,7 +126,11 @@ export class AggregatorService {
 
   // Hotels
   async getHotels(destination: string, date: string, lateCheckIn?: string) {
-    return this.httpClient.call("GET", `${SERVICE_URL.hotels}/hotels`, null, {
+    return this.httpClient.call(
+      "GET", 
+      `${SERVICE_URL.hotels}/hotels`,
+      undefined,
+       {
       destination,
       date,
       lateCheckIn,
@@ -130,7 +140,7 @@ export class AggregatorService {
     return this.httpClient.call(
       "GET",
       `${SERVICE_URL.hotels}/hotels/cheapest`,
-      null,
+      undefined,
       {
         destination,
         lateCheckIn,
@@ -140,7 +150,11 @@ export class AggregatorService {
 
   // Weather
   async getWeather(destination: string, date: string) {
-    return this.httpClient.call("GET", `${SERVICE_URL.weather}/weather`, null, {
+    return this.httpClient.call(
+      "GET", 
+      `${SERVICE_URL.weather}/weather`, 
+      undefined, 
+      {
       destination,
       date,
     });
@@ -152,7 +166,11 @@ export class AggregatorService {
     date?: string,
     category: string = "beach"
   ) {
-    return this.httpClient.call("GET", `${SERVICE_URL.events}/events`, null, {
+    return this.httpClient.call(
+      "GET", 
+      `${SERVICE_URL.events}/events`, 
+      undefined,
+      {
       destination,
       date,
       category,

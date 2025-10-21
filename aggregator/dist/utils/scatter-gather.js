@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var ScatterGather_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScatterGather = void 0;
@@ -104,6 +107,7 @@ let ScatterGather = ScatterGather_1 = class ScatterGather {
 exports.ScatterGather = ScatterGather;
 exports.ScatterGather = ScatterGather = ScatterGather_1 = __decorate([
     (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => aggregator_service_1.AggregatorService))),
     __metadata("design:paramtypes", [aggregator_service_1.AggregatorService])
 ], ScatterGather);
 //# sourceMappingURL=scatter-gather.js.map
