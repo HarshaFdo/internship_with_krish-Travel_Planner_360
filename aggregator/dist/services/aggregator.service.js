@@ -20,7 +20,7 @@ const chaining_1 = require("../utils/chaining");
 const branching_1 = require("../utils/branching");
 const circuit_breaker_1 = require("../utils/circuit-breaker");
 const HttpClient_1 = require("../utils/HttpClient");
-require('dotenv').config();
+require("dotenv").config();
 let AggregatorService = AggregatorService_1 = class AggregatorService {
     constructor(scatterGather, chaining, branching, circuitBreaker, httpClient) {
         this.scatterGather = scatterGather;
@@ -29,20 +29,36 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
         this.circuitBreaker = circuitBreaker;
         this.httpClient = httpClient;
         this.logger = new common_1.Logger(AggregatorService_1.name);
+        this.USE_CIRCUIT_BREAKER = true;
     }
     // weather service with circuit breaker
     async fetchWeatherWithCircuitBreaker(destination, date) {
         this.logger.log(`[AggregatorService] Fetching weather for ${destination} on ${date}`);
+        const startTime = performance.now();
         try {
-            const weather = await this.circuitBreaker.execute(() => this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, undefined, {
-                destination,
-                date,
-            }), () => ({
-                destination,
-                forecast: [],
-                degraded: true,
-                error: "Weather service temporarily unavailable",
-            }), "weather-service");
+            let weather;
+            if (this.USE_CIRCUIT_BREAKER) {
+                // WITH Circuit Breaker - fast fail if service is down
+                const weather = await this.circuitBreaker.execute(() => this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, undefined, {
+                    destination,
+                    date,
+                }), () => ({
+                    destination,
+                    forecast: [],
+                    degraded: true,
+                    error: "Weather service temporarily unavailable (Circuit Breaker OPEN)",
+                }), "weather-service");
+            }
+            else {
+                // WITHOUT Circuit Breaker - direct call (will wait/timeout)
+                this.logger.warn("[AggregatorService] Circuit Breaker DISABLED - making direct call");
+                weather = await this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.weather}/weather`, undefined, {
+                    destination,
+                    date,
+                });
+            }
+            const duration = performance.now() - startTime;
+            this.logger.log(`[AggregatorService] Weather service responded in ${duration.toFixed(2)} ms`);
             if (weather.degraded) {
                 this.logger.warn(`[AggregatorService] Weather service degraded`);
             }
@@ -52,13 +68,16 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
             return weather;
         }
         catch (error) {
+            const duration = performance.now() - startTime;
             const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-            this.logger.error(`[AggregatorService] Weather circuit breaker error: ${errorMessage}`);
+            this.logger.error(`[AggregatorService] Weather circuit breaker error after ${duration.toFixed(2)}: ${errorMessage}`);
             return {
                 destination,
                 forecast: [],
                 degraded: true,
-                error: "Weather service unavailable",
+                error: this.USE_CIRCUIT_BREAKER
+                    ? "Weather service unavailable (Circuit Breaker)"
+                    : "Weather service unavailable (Direct call failed)",
             };
         }
     }
@@ -83,7 +102,6 @@ let AggregatorService = AggregatorService_1 = class AggregatorService {
     }
     // Microservices Client methods
     // Flights
-    //harish
     async getFlights(from, to, date) {
         return this.httpClient.call("GET", `${HttpClient_1.SERVICE_URL.flights}/flights`, undefined, // body is undefined for GET
         { from, to, date } // send as query params

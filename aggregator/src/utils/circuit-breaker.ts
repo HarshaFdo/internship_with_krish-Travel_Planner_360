@@ -91,7 +91,7 @@ export class CircuitBreaker {
           : "0%",
       requests: this.requests.length,
       halfOpenCount: this.halfOpenCount,
-      openedAt: this.openedAt,
+      openedAt: new Date().toLocaleString(),
     };
   }
 }

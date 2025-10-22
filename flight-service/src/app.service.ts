@@ -40,6 +40,11 @@ export class AppService {
   }
 
   getCheapestFlight(query: GetCheapestFlightDto) {
+    console.log("getCheapestFlight")
+    // setTimeout(() => {
+    //   console.log("set interval executed")
+    // }, 6500);
+ 
     let filtered = this.flights.filter(
       (flight) =>
         flight.from.toLocaleLowerCase() === query.from.toLocaleLowerCase() &&

@@ -38,6 +38,10 @@ let AppService = AppService_1 = class AppService {
         };
     }
     getCheapestFlight(query) {
+        console.log("getCheapestFlight");
+        // setTimeout(() => {
+        //   console.log("set interval executed")
+        // }, 6500);
         let filtered = this.flights.filter((flight) => flight.from.toLocaleLowerCase() === query.from.toLocaleLowerCase() &&
             flight.to.toLocaleLowerCase() === query.to.toLocaleLowerCase());
         if (query.date) {

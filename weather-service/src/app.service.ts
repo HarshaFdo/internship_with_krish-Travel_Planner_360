@@ -18,10 +18,7 @@ export class AppService {
   private originalDelay: number;
 
   constructor() {
-    this.serviceDelayDuration = parseInt(
-      process.env.WEATHER_DELAY_MS || "0",
-      10
-    );
+    this.serviceDelayDuration = parseInt(process.env.WEATHER_DELAY_MS || "0", 10);
     this.originalDelay = this.serviceDelayDuration;
 
     this.logger.log(

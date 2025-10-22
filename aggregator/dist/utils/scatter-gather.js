@@ -46,22 +46,32 @@ let ScatterGather = ScatterGather_1 = class ScatterGather {
                 resolve({ timeout: true });
             }, this.TIMEOUT_MS);
         });
-        const results = await Promise.race([
+        const raceResults = await Promise.race([
             Promise.allSettled([flightPromise, hotelPromise]),
             timeoutPromise,
         ]);
         const elapsedTime = Date.now() - startTime;
-        if (results && typeof results === "object" && "timeout" in results) {
+        // Timeout occurred - check what's already resolved
+        if (raceResults && typeof raceResults === "object" && "timeout" in raceResults) {
             this.logger.warn(`[Scatter-Gather] Timeout occurred after ${this.TIMEOUT_MS} ms - returning partial results`);
-            const partialResults = await Promise.allSettled([
+            // Create promises that resolve immediately with current state
+            const flightSnapshot = Promise.race([
                 flightPromise,
+                Promise.resolve({ data: null, service: "flight", success: false, error: "timeout - still pending" })
+            ]);
+            const hotelSnapshot = Promise.race([
                 hotelPromise,
+                Promise.resolve({ data: null, service: "hotel", success: false, error: "timeout - still pending" })
+            ]);
+            const partialResults = await Promise.allSettled([
+                flightSnapshot,
+                hotelSnapshot,
             ]);
             return this.buildResponse(partialResults, elapsedTime, true);
         }
         else {
             this.logger.log(`[Scatter-Gather] Completed in ${elapsedTime} ms`);
-            return this.buildResponse(results, elapsedTime, false);
+            return this.buildResponse(raceResults, elapsedTime, false);
         }
     }
     buildResponse(results, elapsedTime, isTimeout) {

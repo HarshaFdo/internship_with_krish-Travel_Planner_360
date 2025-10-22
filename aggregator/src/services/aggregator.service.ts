@@ -4,11 +4,12 @@ import { Chaining } from "../utils/chaining";
 import { Branching } from "../utils/branching";
 import { CircuitBreaker } from "../utils/circuit-breaker";
 import { HttpClient, SERVICE_URL } from "../utils/HttpClient";
-require('dotenv').config();
+require("dotenv").config();
 
 @Injectable()
 export class AggregatorService {
   private readonly logger = new Logger(AggregatorService.name);
+  private readonly USE_CIRCUIT_BREAKER = true;
 
   constructor(
     @Inject(forwardRef(() => ScatterGather))
@@ -27,20 +28,52 @@ export class AggregatorService {
       `[AggregatorService] Fetching weather for ${destination} on ${date}`
     );
 
+    const startTime = performance.now();
+
     try {
-      const weather = await this.circuitBreaker.execute(
-        () =>
-          this.httpClient.call("GET", `${SERVICE_URL.weather}/weather`, undefined, {
+      let weather;
+
+      if (this.USE_CIRCUIT_BREAKER) {
+        // WITH Circuit Breaker - fast fail if service is down
+        const weather = await this.circuitBreaker.execute(
+          () =>
+            this.httpClient.call(
+              "GET",
+              `${SERVICE_URL.weather}/weather`,
+              undefined,
+              {
+                destination,
+                date,
+              }
+            ),
+          () => ({
+            destination,
+            forecast: [],
+            degraded: true,
+            error:
+              "Weather service temporarily unavailable (Circuit Breaker OPEN)",
+          }),
+          "weather-service"
+        );
+      } else {
+        // WITHOUT Circuit Breaker - direct call (will wait/timeout)
+        this.logger.warn(
+          "[AggregatorService] Circuit Breaker DISABLED - making direct call"
+        );
+        weather = await this.httpClient.call(
+          "GET",
+          `${SERVICE_URL.weather}/weather`,
+          undefined,
+          {
             destination,
             date,
-          }),
-        () => ({
-          destination,
-          forecast: [],
-          degraded: true,
-          error: "Weather service temporarily unavailable",
-        }),
-        "weather-service"
+          }
+        );
+      }
+
+      const duration = performance.now() - startTime;
+      this.logger.log(
+        `[AggregatorService] Weather service responded in ${duration.toFixed(2)} ms`
       );
 
       if (weather.degraded) {
@@ -53,17 +86,22 @@ export class AggregatorService {
 
       return weather;
     } catch (error) {
+      const duration = performance.now() - startTime;
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       this.logger.error(
-        `[AggregatorService] Weather circuit breaker error: ${errorMessage}`
+        `[AggregatorService] Weather circuit breaker error after ${duration.toFixed(
+          2
+        )}: ${errorMessage}`
       );
 
       return {
         destination,
         forecast: [],
         degraded: true,
-        error: "Weather service unavailable",
+        error: this.USE_CIRCUIT_BREAKER
+          ? "Weather service unavailable (Circuit Breaker)"
+          : "Weather service unavailable (Direct call failed)",
       };
     }
   }
@@ -100,16 +138,14 @@ export class AggregatorService {
 
   // Microservices Client methods
   // Flights
-  //harish
-async getFlights(from?: string, to?: string, date?: string) {
-  return this.httpClient.call(
-    "GET",
-    `${SERVICE_URL.flights}/flights`,
-    undefined, // body is undefined for GET
-    { from, to, date } // send as query params
-  );
-}
-
+  async getFlights(from?: string, to?: string, date?: string) {
+    return this.httpClient.call(
+      "GET",
+      `${SERVICE_URL.flights}/flights`,
+      undefined, // body is undefined for GET
+      { from, to, date } // send as query params
+    );
+  }
 
   async getCheapestFlight(from: string, to: string, date?: string) {
     return this.httpClient.call(
@@ -127,14 +163,15 @@ async getFlights(from?: string, to?: string, date?: string) {
   // Hotels
   async getHotels(destination: string, date: string, lateCheckIn?: string) {
     return this.httpClient.call(
-      "GET", 
+      "GET",
       `${SERVICE_URL.hotels}/hotels`,
       undefined,
-       {
-      destination,
-      date,
-      lateCheckIn,
-    });
+      {
+        destination,
+        date,
+        lateCheckIn,
+      }
+    );
   }
   async getCheapestHotel(destination: string, lateCheckIn?: string) {
     return this.httpClient.call(
@@ -151,13 +188,14 @@ async getFlights(from?: string, to?: string, date?: string) {
   // Weather
   async getWeather(destination: string, date: string) {
     return this.httpClient.call(
-      "GET", 
-      `${SERVICE_URL.weather}/weather`, 
-      undefined, 
+      "GET",
+      `${SERVICE_URL.weather}/weather`,
+      undefined,
       {
-      destination,
-      date,
-    });
+        destination,
+        date,
+      }
+    );
   }
 
   // Events
@@ -167,13 +205,14 @@ async getFlights(from?: string, to?: string, date?: string) {
     category: string = "beach"
   ) {
     return this.httpClient.call(
-      "GET", 
-      `${SERVICE_URL.events}/events`, 
+      "GET",
+      `${SERVICE_URL.events}/events`,
       undefined,
       {
-      destination,
-      date,
-      category,
-    });
+        destination,
+        date,
+        category,
+      }
+    );
   }
 }
